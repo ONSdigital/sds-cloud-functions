@@ -1,0 +1,11 @@
+steps:
+- name: 'gcr.io/cloud-builders/zip'
+  args: ['-r', '/workspace/function.zip', '.']
+  dir: 'src'
+
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    gsutil cp /workspace/function.zip gs://ons-sds-jb-europe-west2-cloudfunctions/dataset-deletion-function/dataset-deletion-function-source.zip
