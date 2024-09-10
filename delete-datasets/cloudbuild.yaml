@@ -3,7 +3,7 @@ steps:
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/zip', '.']
 
 - name: 'gcr.io/$PROJECT_ID/zip'
-  args: ['-r', 'function.zip', '/delete-datasets/src']
+  args: ['-r', 'function.zip', '-i', '/delete-datasets/src']
 
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: 'bash'
