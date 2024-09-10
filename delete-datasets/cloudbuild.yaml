@@ -9,3 +9,6 @@ steps:
   - '-c'
   - |
     gsutil cp /workspace/function.zip gs://ons-sds-jb-europe-west2-cloudfunctions/dataset-deletion-function/dataset-deletion-function-source.zip
+
+options:
+  logging: CLOUD_LOGGING_ONLY
