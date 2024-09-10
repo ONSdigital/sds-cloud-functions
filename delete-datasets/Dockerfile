@@ -1,6 +1,5 @@
-FROM launcher.gcr.io/google/ubuntu16_04
-
-RUN apt-get update && \
-    apt-get -y install zip
+FROM ubuntu
+RUN apt-get -q update && \
+apt-get -qqy install zip bzip2 gzip
 
 ENTRYPOINT ["zip"]
