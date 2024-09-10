@@ -1,10 +1,6 @@
 steps:
-- name: 'gcr.io/cloud-builders/gsutil'
-  entrypoint: 'zip'
-  args:
-  - '-r'
-  - '/workspace/function.zip'
-  - 'src'
+- name: 'gcr.io/$PROJECT_ID/zip'
+  args: ['-r', 'function.zip', '/src']
 
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: 'bash'
