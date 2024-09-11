@@ -13,6 +13,31 @@ steps:
   - |
     gsutil cp /workspace/function.zip gs://ons-sds-jb-europe-west2-cloudfunctions/dataset-deletion-function/dataset-deletion-function-source.zip
 
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  args:
+  - 'gcloud'
+  - 'functions'
+  - 'deploy'
+  - 'dataset-deletion-function'
+  - "--gen2"
+  - "--ingress-settings"
+  - "all"
+  - '--runtime'
+  - 'python311'
+  - '--region'
+  - 'europe-west2'
+  - 'entry-point'
+  - 'delete_dataset'
+  - '--timeout'
+  - '3600s'
+  - '--memory'
+  - '10G'
+  - '--cpu'
+  - '4'
+  - '--trigger-http'
+  - '--source'
+  - 'gs://ons-sds-jb-europe-west2-cloudfunctions/dataset-deletion-function/dataset-deletion-function-source.zip'
+
 options:
   logging: CLOUD_LOGGING_ONLY
 images: ['gcr.io/$PROJECT_ID/zip']
