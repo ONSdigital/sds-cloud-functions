@@ -11,14 +11,14 @@ steps:
   args:
   - '-c'
   - |
-    gsutil cp /workspace/function.zip gs://$PROJECT_ID-europe-west2-cloudfunctions/{_FUNCTION_NAME}/{_FUNCTION_NAME}-source.zip
+    gsutil cp /workspace/function.zip gs://$PROJECT_ID-europe-west2-cloudfunctions/${_FUNCTION_NAME}/${_FUNCTION_NAME}-source.zip
 
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   args:
   - 'gcloud'
   - 'functions'
   - 'deploy'
-  - '{_FUNCTION_NAME}'
+  - '${_FUNCTION_NAME}'
   - "--gen2"
   - "--no-allow-unauthenticated"
   - "--ingress-settings"
@@ -31,7 +31,7 @@ steps:
   - '${_ENTRY_POINT}'
   - '--trigger-http'
   - '--source'
-  - 'gs://$PROJECT_ID-europe-west2-cloudfunctions/${_FUNCTION_NAME}/{_FUNCTION_NAME}-source.zip'
+  - 'gs://$PROJECT_ID-europe-west2-cloudfunctions/${_FUNCTION_NAME}/${_FUNCTION_NAME}-source.zip'
 
 options:
   logging: CLOUD_LOGGING_ONLY
