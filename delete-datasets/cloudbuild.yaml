@@ -26,7 +26,7 @@ steps:
   - 'python311'
   - '--region'
   - 'europe-west2'
-  - 'entry-point'
+  - '--entry-point'
   - 'delete_dataset'
   - '--timeout'
   - '3600s'
