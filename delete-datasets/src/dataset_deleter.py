@@ -22,19 +22,19 @@ class DatasetDeleter:
         self.client = firestore.Client(project=config.PROJECT_ID, database=config.DATABASE)
 
         # Initialize Firestore collections
-        self.mark_deletion_collection = self.client.collection("marked-for-deletion")
+        self.mark_deletion_collection = self.client.collection("marked_for_deletion")
         self.dataset_collection = self.client.collection("datasets")
 
         # Dataset GUID for deletion
         self.guid = None
-        # Record ID in the 'marked-for-deletion' collection
+        # Record ID in the 'marked_for_deletion' collection
         self.marked_id = None
 
 
     def fetch_dataset_deletion_from_collection(self) -> None:
         """
         Function that will fetch 1 dataset with Processing or 
-        Pending status from the 'marked-for-deletion' collection 
+        Pending status from the 'marked_for_deletion' collection 
         in Firestore and store the guid of that dataset and the
         deletion record id.
         """
