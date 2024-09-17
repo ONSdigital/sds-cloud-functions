@@ -7,7 +7,6 @@ logger = logging.getLogger(__name__)
 
 @functions_framework.http
 def delete_dataset(requests):
-    # Test cloud function deployment via Terraform
     dataset_deleter = DatasetDeleter()
 
     logger.info("Fetching dataset to delete...")
