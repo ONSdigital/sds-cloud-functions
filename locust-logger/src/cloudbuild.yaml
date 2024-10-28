@@ -1,0 +1,38 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/zip', '.', '-f', 'locust-logger/Dockerfile-zip']
+
+- name: 'gcr.io/$PROJECT_ID/zip'
+  args: ['-r', '/workspace/function.zip', '.']
+  dir: 'locust-logger/src'
+
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    gsutil cp /workspace/function.zip gs://$PROJECT_ID-europe-west2-cloudfunctions/${_FUNCTION_NAME}/${_FUNCTION_NAME}-source.zip
+
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  args:
+  - 'gcloud'
+  - 'functions'
+  - 'deploy'
+  - '${_FUNCTION_NAME}'
+  - "--gen2"
+  - "--no-allow-unauthenticated"
+  - "--ingress-settings"
+  - "all"
+  - '--runtime'
+  - 'python311'
+  - '--region'
+  - 'europe-west2'
+  - '--entry-point'
+  - '${_ENTRY_POINT}'
+  - '--trigger-http'
+  - '--source'
+  - 'gs://$PROJECT_ID-europe-west2-cloudfunctions/${_FUNCTION_NAME}/${_FUNCTION_NAME}-source.zip'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+images: ['gcr.io/$PROJECT_ID/zip']
