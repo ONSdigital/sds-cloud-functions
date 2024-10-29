@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 locust_logger = LocustLogger()
 
 @functions_framework.cloud_event
-def log_locust_result(cloud_event):
+def log_locust_results(cloud_event):
     """
     Cloud Function to respond to automated performance test results uploaded to a GCP bucket.
     Results uploaded are a directory with 4 files, one of which is the results_stats.csv.
