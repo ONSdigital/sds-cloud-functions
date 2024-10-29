@@ -29,10 +29,8 @@ steps:
   - 'europe-west2'
   - '--entry-point'
   - '${_ENTRY_POINT}'
-  - '--trigger-event'
-  - 'google.pubsub.topic.publish'
-  - '--trigger-topic'
-  - 'eventarc_locust_logger_topic'
+  - '--trigger-bucket'
+  - 'ons-sds-performance-sds-locust-tasks-result'
   - '--source'
   - 'gs://$PROJECT_ID-europe-west2-cloudfunctions/${_FUNCTION_NAME}/${_FUNCTION_NAME}-source.zip'
 
