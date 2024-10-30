@@ -1,4 +1,5 @@
 import pandas as pd
+import io
 from locust_result_evaluator import LocustResultEvaluator
 from logging_config import logging
 from anomaly_logs import anomaly_logs
@@ -80,7 +81,8 @@ class LocustLogger:
         Parameters:
         file: The contents of the CSV file as a string.
         """
-        return pd.read_csv(file, encoding="utf-8")
+        #return pd.read_csv(file, encoding="utf-8")
+        return pd.read_csv(io.StringIO(file.decode("utf-8")))
     
     def _extract_total_failure_count_from_results(self) -> int:
         """
