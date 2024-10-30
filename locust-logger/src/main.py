@@ -38,15 +38,15 @@ def log_locust_results(cloud_event):
     logger.info("Result loaded. Evaluating results...")
 
     # Evaluate results and log anoamlies
-    results_is_anomaly = False
+    check_no_anomalies = True
 
     if locust_logger.log_anomaly_failure_count():
-        results_is_anomaly = True
+        check_no_anomalies = False
 
     if locust_logger.log_anomaly_avg_response_time():
-        results_is_anomaly = True
+        check_no_anomalies = False
 
-    if not results_is_anomaly:
+    if check_no_anomalies:
         logger.info("Performance test results evaluation completed. Results are normal.")
 
 
