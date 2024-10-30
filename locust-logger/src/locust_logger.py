@@ -2,6 +2,7 @@ import pandas as pd
 from locust_result_evaluator import LocustResultEvaluator
 from logging_config import logging
 from anomaly_logs import anomaly_logs
+from google.cloud import storage
 
 from config import config
 
@@ -30,7 +31,17 @@ class LocustLogger:
         Parameters:
         filepath: The path of the file in the bucket
         """
-        self.locust_result_df = self._get_results_as_df(filepath)
+        bucket_name = config.LOCUST_RESULT_BUCKET
+
+        storage_client = storage.Client()
+        blob = storage_client.bucket(bucket_name).blob(filepath)
+
+        if not blob.exists():
+            raise RuntimeError(f"Failed to read result file from bucket.")
+
+        file = blob.download_as_string()
+
+        self.locust_result_df = self._get_results_as_df(file)
     
     def log_anomaly_failure_count(self, logger: logging) -> bool:
         """
@@ -39,7 +50,10 @@ class LocustLogger:
         failure_count = self._extract_total_failure_count_from_results()
 
         if LocustResultEvaluator.is_above_threshold(failure_count, config.FAILURE_COUNT_ALERT_THRESHOLD):
-            logger.error(f"{anomaly_logs.ANOMALY_LOG_FAILURE_COUNT} Failure count is {failure_count} while the threshold is {config.FAILURE_COUNT_ALERT_THRESHOLD}.")
+            logger.error(
+                f"{anomaly_logs.ANOMALY_LOG_FAILURE_COUNT}"
+                f" Failure count is {failure_count} while the threshold is {config.FAILURE_COUNT_ALERT_THRESHOLD}."
+            )
             return False
         
         return True
@@ -51,7 +65,10 @@ class LocustLogger:
         avg_response_time = self._extract_total_average_response_time_from_results()
 
         if LocustResultEvaluator.is_above_threshold(avg_response_time, config.RESPONSE_TIME_ALERT_THRESHOLD):
-            logger.error(f"{anomaly_logs.ANOMALY_LOG_AVG_RESPONSE_TIME} Average response time is {avg_response_time} ms while the threshold is {config.RESPONSE_TIME_ALERT_THRESHOLD} ms.")
+            logger.error(
+                f"{anomaly_logs.ANOMALY_LOG_AVG_RESPONSE_TIME}"
+                f" Average response time is {avg_response_time} ms while the threshold is {config.RESPONSE_TIME_ALERT_THRESHOLD} ms."
+               )
             return False
         
         return True
