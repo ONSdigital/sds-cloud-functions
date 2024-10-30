@@ -13,7 +13,8 @@ class LocustLogger:
     locust_result_file: str
     locust_result_df: pd.DataFrame
 
-    def __init__(self):
+    def __init__(self, logger: logging):
+        self.logger = logger
         self.locust_result_file = config.LOCUST_RESULT_FILENAME
 
     def is_results_file(self, filepath):
@@ -44,34 +45,36 @@ class LocustLogger:
 
         self.locust_result_df = self._get_results_as_df(file)
     
-    def log_anomaly_failure_count(self, logger: logging) -> bool:
+    def log_anomaly_failure_count(self) -> bool:
         """
         Function to log the failure count anomaly.
         """
         failure_count = self._extract_total_failure_count_from_results()
 
         if LocustResultEvaluator.is_above_threshold(failure_count, config.FAILURE_COUNT_ALERT_THRESHOLD):
-            logger.error(
+            self.logger.error(
                 f"{anomaly_logs.ANOMALY_LOG_FAILURE_COUNT}"
                 f" Failure count is {failure_count} while the threshold is {config.FAILURE_COUNT_ALERT_THRESHOLD}."
             )
             return False
         
+        self.logger.info("Failure count anomaly test passed.")
         return True
     
-    def log_anomaly_avg_response_time(self, logger: logging) -> bool:
+    def log_anomaly_avg_response_time(self) -> bool:
         """
         Function to log the response time anomaly.
         """
         avg_response_time = self._extract_total_average_response_time_from_results()
 
         if LocustResultEvaluator.is_above_threshold(avg_response_time, config.RESPONSE_TIME_ALERT_THRESHOLD):
-            logger.error(
+            self.logger.error(
                 f"{anomaly_logs.ANOMALY_LOG_AVG_RESPONSE_TIME}"
                 f" Average response time is {avg_response_time} ms while the threshold is {config.RESPONSE_TIME_ALERT_THRESHOLD} ms."
                )
             return False
         
+        self.logger.info("Average response time anomaly test passed.")
         return True
     
     def _get_results_as_df(self, file: str) -> pd.DataFrame:

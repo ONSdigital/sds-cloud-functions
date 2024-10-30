@@ -8,7 +8,7 @@ import io as io
 from locust_logger import LocustLogger
 
 logger = logging.getLogger(__name__)
-locust_logger = LocustLogger()
+locust_logger = LocustLogger(logger)
 
 @functions_framework.cloud_event
 def log_locust_results(cloud_event):
@@ -35,13 +35,15 @@ def log_locust_results(cloud_event):
     # load results from file
     locust_logger.load_results(filepath)
 
+    logger.info("Result loaded. Evaluating results...")
+
     # Evaluate results and log anoamlies
     results_is_anomaly = False
 
-    if locust_logger.log_anomaly_failure_count(logger):
+    if locust_logger.log_anomaly_failure_count():
         results_is_anomaly = True
 
-    if locust_logger.log_anomaly_avg_response_time(logger):
+    if locust_logger.log_anomaly_avg_response_time():
         results_is_anomaly = True
 
     if not results_is_anomaly:
