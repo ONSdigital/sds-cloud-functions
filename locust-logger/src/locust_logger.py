@@ -88,6 +88,8 @@ class LocustLogger:
         """
         failure_count = self._extract_total_failure_count_from_results()
 
+        self.logger.debug(f"Failure count: {failure_count}")
+
         if LocustResultEvaluator.is_above_threshold(failure_count, config.FAILURE_COUNT_ALERT_THRESHOLD):
             self.logger.error(
                 f"{anomaly_logs.ANOMALY_LOG_FAILURE_COUNT}"
@@ -106,6 +108,8 @@ class LocustLogger:
         bool: False if the average response time is above the threshold, True otherwise.
         """
         avg_response_time = self._extract_total_average_response_time_from_results()
+
+        self.logger.debug(f"Average response time: {avg_response_time}")
 
         if LocustResultEvaluator.is_above_threshold(avg_response_time, config.RESPONSE_TIME_ALERT_THRESHOLD):
             self.logger.error(
