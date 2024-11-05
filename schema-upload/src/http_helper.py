@@ -1,10 +1,13 @@
 import google.oauth2.id_token
+from google.cloud import secretmanager
 import requests
-from config.config_factory import config
+from logging_config import logging
+from config import Config
 
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
+logging = logging.getLogger(__name__)
 
 def setup_session() -> requests.Session:
     """
@@ -36,10 +39,10 @@ def generate_headers() -> dict[str, str]:
         dict[str, str]: the headers required for remote authentication.
     """
     headers = {}
-
+    oauth_client_id = access_secret_version()
     auth_req = google.auth.transport.requests.Request()
     auth_token = google.oauth2.id_token.fetch_id_token(
-        auth_req, audience=config.OAUTH_CLIENT_ID
+        auth_req, audience=oauth_client_id
     )
 
     headers = {
@@ -47,4 +50,15 @@ def generate_headers() -> dict[str, str]:
         "Content-Type": "application/json",
     }
 
+    print(f"Headers: {headers}")
+
     return headers
+
+def access_secret_version() -> str:
+    """
+    Access the secret version from Google Cloud Secret Manager.
+    """
+    client = secretmanager.SecretManagerServiceClient()
+    name = f"projects/{Config.PROJECT_ID}/secrets/{Config.SECRET_ID}/versions/latest"
+    response = client.access_secret_version(name=name)
+    return response.payload.data.decode("UTF-8")
