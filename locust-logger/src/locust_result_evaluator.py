@@ -2,6 +2,7 @@ import pandas as pd
 
 class LocustResultEvaluator:
     """
+    Class to evaluate the results from the locust tests files.
     """
     @staticmethod
     def get_row_aggregated(df: pd.DataFrame) -> pd.DataFrame:
