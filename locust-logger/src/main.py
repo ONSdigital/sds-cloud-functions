@@ -1,8 +1,5 @@
 import functions_framework
-from google.cloud import storage
 from logging_config import logging
-from config import config
-import pandas as pd
 import io as io
 
 from locust_logger import LocustLogger
