@@ -1,5 +1,4 @@
 import base64
-import sys
 from cloudevents.http import CloudEvent
 import functions_framework
 from http_helper import generate_headers, setup_session
@@ -19,7 +18,12 @@ def subscribe(cloud_event: CloudEvent) -> None:
         cloud_event (CloudEvent): the CloudEvent containing the message.
     """
     filepath = base64.b64decode(cloud_event.data["message"]["data"]).decode('utf-8')
+
     schema = fetch_raw_schema(filepath)
+
+    if schema is None:
+        logger.error("Stopping execution due to failed schema fetch.")
+        return
 
     if not verify_version(filepath, schema):
         logger.error("Stopping execution due to schema version mismatch.")
@@ -28,7 +32,7 @@ def subscribe(cloud_event: CloudEvent) -> None:
     survey_id = fetch_survey_id(schema)
     response = post_schema(schema, survey_id)
     if response.status_code == 200:
-        logger.info(f"Schema for survey {survey_id} posted successfully")
+        logger.info(f"Schema {filepath} posted successfully")
     else:
         logger.error(f"Failed to post schema for survey {survey_id}")
         logger.error(response.text)
@@ -47,15 +51,20 @@ def fetch_raw_schema(path) -> dict:
 
     url = f'https://raw.githubusercontent.com/ONSdigital/sds-prototype-schema/refs/heads/SDSS-823-schema-publication-automation-spike/{path}'
     logger.info(f"Fetching schema from {url}")
-    response = requests.get(url)
-    schema = response.content
     try:
-        schema = json.loads(schema)
-    except json.JSONDecodeError:
-        logger.error(f"Failed to load schema JSON from {url}")
-        logger.debug(schema)
-        exit(1)
-
+        response = requests.get(url)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Failed to fetch schema from {url}")
+        logger.error(e)
+        return None
+    
+    try:
+        schema = response.json()
+    except json.JSONDecodeError as e:
+        logger.error("Failed to decode schema JSON")
+        logger.error(e)
+        return None
     return schema
 
 
@@ -129,5 +138,5 @@ def verify_version(filepath, schema) -> bool:
         logger.info(f"Schema version for {filename} verified.")
         return True
     else:
-        logger.error(f"Schema version for {filename} does not match. Expected {filename}, got {schema['properties']['schema_version']['const']}")
+        logger.error(f"Schema version for {filepath} does not match. Expected {filename}, got {schema['properties']['schema_version']['const']}")
     return False
