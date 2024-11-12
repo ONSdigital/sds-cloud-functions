@@ -1,6 +1,6 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/zip', '.', '-f', 'locust-logger/Dockerfile-zip']
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/zip', '.', '-f', 'Dockerfile-zip/Dockerfile-zip']
 
 - name: 'gcr.io/$PROJECT_ID/zip'
   args: ['-r', '/workspace/function.zip', '.']
