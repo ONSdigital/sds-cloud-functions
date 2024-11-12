@@ -4,7 +4,7 @@ steps:
 
 - name: 'gcr.io/$PROJECT_ID/zip'
   args: ['-r', '/workspace/function.zip', '.']
-  dir: 'delete-datasets/src'
+  dir: 'locust-logger/src'
 
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: 'bash'
@@ -29,7 +29,8 @@ steps:
   - 'europe-west2'
   - '--entry-point'
   - '${_ENTRY_POINT}'
-  - '--trigger-http'
+  - '--trigger-bucket'
+  - 'ons-sds-performance-sds-locust-tasks-result'
   - '--source'
   - 'gs://$PROJECT_ID-europe-west2-cloudfunctions/${_FUNCTION_NAME}/${_FUNCTION_NAME}-source.zip'
 
