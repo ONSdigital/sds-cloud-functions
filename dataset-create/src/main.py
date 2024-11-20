@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 @functions_framework.http
-def new_dataset(request):
+def create_dataset(request):
     """
     Triggered by uploading a new dataset-create file to the
     dataset-create storage bucket. See the 'Cloud Functions' section
