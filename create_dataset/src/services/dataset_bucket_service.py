@@ -13,7 +13,7 @@ class DatasetBucketService:
 
     def get_and_validate_dataset(self, filename: str) -> RawDataset:
         """
-        Validates and retrieves dataset-create from bucket
+        Validates and retrieves create_dataset from bucket
         Parameters:
         filename: name of file being retrieved from bucket
         """
@@ -43,7 +43,7 @@ class DatasetBucketService:
             logger.debug(
                 f"Failed to delete file {filename} from bucket {config.DATASET_BUCKET_NAME} with error: {exc}"
             )
-            raise RuntimeError("Failed to delete file from dataset-create bucket.") from exc
+            raise RuntimeError("Failed to delete file from create_dataset bucket.") from exc
 
     def try_fetch_oldest_filename_from_bucket(self) -> str | None:
         """
@@ -62,4 +62,4 @@ class DatasetBucketService:
             logger.debug(
                 f"Failed to fetch first filename from bucket {config.DATASET_BUCKET_NAME} with error: {exc}"
             )
-            raise RuntimeError("Failed to fetch first filename from dataset-create bucket.") from exc
+            raise RuntimeError("Failed to fetch first filename from create_dataset bucket.") from exc

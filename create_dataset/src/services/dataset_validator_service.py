@@ -74,9 +74,9 @@ class DatasetValidatorService:
     @staticmethod
     def validate_raw_dataset(raw_dataset: RawDataset) -> None:
         """
-        Validates the raw dataset-create.
+        Validates the raw create_dataset.
         Parameters:
-        raw_dataset (RawDataset): dataset-create being validated.
+        raw_dataset (RawDataset): create_dataset being validated.
         """
         DatasetValidatorService._validate_dataset_exists_in_bucket(raw_dataset)
         DatasetValidatorService._validate_dataset_keys(raw_dataset)
@@ -86,21 +86,21 @@ class DatasetValidatorService:
             raw_dataset: RawDataset,
     ) -> None:
         """
-        Validates the dataset-create returned from the bucket is not empty, raising a runtime error if not.
+        Validates the create_dataset returned from the bucket is not empty, raising a runtime error if not.
         Parameters:
-        raw_dataset (RawDataset): dataset-create being validated.
+        raw_dataset (RawDataset): create_dataset being validated.
         """
         if raw_dataset is None:
-            raise RuntimeError("No corresponding dataset-create found in bucket")
+            raise RuntimeError("No corresponding create_dataset found in bucket")
 
     @staticmethod
     def _validate_dataset_keys(
             raw_dataset: RawDataset,
     ) -> None:
         """
-        Validates the dataset-create has no mandatory keys missing from it, raising a runtime error if there are.
+        Validates the create_dataset has no mandatory keys missing from it, raising a runtime error if there are.
         Parameters:
-        raw_dataset (RawDataset): dataset-create being validated.
+        raw_dataset (RawDataset): create_dataset being validated.
         """
         is_valid, message = DatasetValidatorService._check_for_missing_keys(raw_dataset)
 
@@ -122,7 +122,7 @@ class DatasetValidatorService:
         """
         Returns a boolean and message depending on if there are keys missing from the data.
         Parameters:
-        raw_dataset (RawDataset): dataset-create being validated.
+        raw_dataset (RawDataset): create_dataset being validated.
         """
         mandatory_keys = [
             "survey_id",
@@ -145,10 +145,10 @@ class DatasetValidatorService:
             mandatory_keys: list[str], raw_dataset: RawDataset
     ) -> list[str]:
         """
-        Gets a list of any mandatory keys missing from the raw dataset-create.
+        Gets a list of any mandatory keys missing from the raw create_dataset.
         Parameters:
         mandatory_keys (list[str]): mandatory keys referenced.
-        raw_dataset (RawDataset): dataset-create being validated.
+        raw_dataset (RawDataset): create_dataset being validated.
         """
         return [
             mandatory_key

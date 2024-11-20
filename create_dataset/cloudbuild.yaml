@@ -4,7 +4,7 @@ steps:
 
 - name: 'gcr.io/$PROJECT_ID/zip'
   args: ['-r', '/workspace/function.zip', '.']
-  dir: 'dataset-create-create/src'
+  dir: 'create_dataset-create/src'
 
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: 'bash'

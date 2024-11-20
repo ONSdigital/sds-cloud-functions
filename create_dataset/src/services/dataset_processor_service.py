@@ -24,12 +24,12 @@ class DatasetProcessorService:
 
     def process_raw_dataset(self, filename: str, raw_dataset: RawDataset) -> None:
         """
-        Processes the incoming dataset-create.
+        Processes the incoming create_dataset.
         Parameters:
-        filename (str): the filename of the json containing the dataset-create data
-        raw_dataset (RawDatasetWithMetadata): new dataset-create to be processed
+        filename (str): the filename of the json containing the create_dataset data
+        raw_dataset (RawDatasetWithMetadata): new create_dataset to be processed
         """
-        logger.info("Processing new dataset-create...")
+        logger.info("Processing new create_dataset...")
         logger.debug(f"Dataset being processed: {raw_dataset}")
 
         new_dataset_unit_data_collection = raw_dataset.pop("data")
@@ -66,7 +66,7 @@ class DatasetProcessorService:
             self, survey_id: str, period_id: str
     ) -> list[DatasetMetadata]:
         """
-        Gets the collection of dataset-create metadata associated with a specific survey and period id.
+        Gets the collection of create_dataset metadata associated with a specific survey and period id.
         Parameters:
         survey_id (str): survey id of the collection.
         period_id (str): period id of the collection.
@@ -82,13 +82,13 @@ class DatasetProcessorService:
             dataset_unit_data_collection: list[object],
     ) -> DatasetMetadataWithoutId:
         """
-        Returns a copy of the dataset-create with added metadata.
+        Returns a copy of the create_dataset with added metadata.
         Parameters:
-        raw_dataset (RawDatasetWithoutData): the original dataset-create without the data object.
-        filename (str): the filename of the json containing the dataset-create data
-        dataset_unit_data_collection (list[object]): collection of unit data in the new dataset-create
+        raw_dataset (RawDatasetWithoutData): the original create_dataset without the data object.
+        filename (str): the filename of the json containing the create_dataset data
+        dataset_unit_data_collection (list[object]): collection of unit data in the new create_dataset
         """
-        logger.info("Adding metadata to new dataset-create...")
+        logger.info("Adding metadata to new create_dataset...")
 
         dataset_metadata_without_id = {
             **raw_dataset,
@@ -102,16 +102,16 @@ class DatasetProcessorService:
             ),
         }
 
-        logger.info("Metadata added to new dataset-create successfully.")
+        logger.info("Metadata added to new create_dataset successfully.")
 
         return dataset_metadata_without_id
 
     def _calculate_next_dataset_version(self, survey_id: str, period_id: str) -> int:
         """
-        Calculates the next sds_dataset_version from a single dataset-create from firestore with a specific survey_id.
+        Calculates the next sds_dataset_version from a single create_dataset from firestore with a specific survey_id.
         Parameters:
-        survey_id: survey_id of the specified dataset-create.
-        period_id: period_id of the specified dataset-create.
+        survey_id: survey_id of the specified create_dataset.
+        period_id: period_id of the specified create_dataset.
         """
         datasets_result = (
             self.dataset_repository.get_latest_dataset_with_survey_id_and_period_id(
@@ -127,10 +127,10 @@ class DatasetProcessorService:
             self, survey_id: str, period_id: str
     ) -> int:
         """
-        Calculates the previous sds_dataset_version from a single dataset-create from firestore with a specific survey_id.
+        Calculates the previous sds_dataset_version from a single create_dataset from firestore with a specific survey_id.
         Parameters:
-        survey_id: survey_id of the specified dataset-create.
-        period_id: period_id of the specified dataset-create.
+        survey_id: survey_id of the specified create_dataset.
+        period_id: period_id of the specified create_dataset.
         """
         datasets_result = (
             self.dataset_repository.get_latest_dataset_with_survey_id_and_period_id(
@@ -151,8 +151,8 @@ class DatasetProcessorService:
         """
         Transforms the new unit data to a new format for storing in firestore.
         Parameters:
-        dataset_id (str): dataset_id for the new dataset-create.
-        transformed_dataset_metadata (DatasetMetadataWithoutId): the dataset-create metadata without id
+        dataset_id (str): dataset_id for the new create_dataset.
+        transformed_dataset_metadata (DatasetMetadataWithoutId): the create_dataset metadata without id
         raw_dataset_unit_data_collection (list[object]): list of unit data to be transformed
         """
         logger.info("Adding metadata to unit data collection...")
@@ -166,7 +166,7 @@ class DatasetProcessorService:
 
         logger.info("Metadata added to unit data collection transformed successfully.")
         logger.debug(
-            f"Metadata added to unit data collection for dataset-create with id: {dataset_id}"
+            f"Metadata added to unit data collection for create_dataset with id: {dataset_id}"
         )
 
         return unit_data_collection_with_metadata
@@ -180,8 +180,8 @@ class DatasetProcessorService:
         """
         Transforms a unit data item to a new format for storing in firestore.
         Parameters:
-        dataset_id (str): dataset_id for the new dataset-create.
-        transformed_dataset_metadata (DatasetMetadataWithoutId): the dataset-create metadata without id
+        dataset_id (str): dataset_id for the new create_dataset.
+        transformed_dataset_metadata (DatasetMetadataWithoutId): the create_dataset metadata without id
         unit_data_item (object): unit data item to be transformed
         """
         return {
@@ -219,19 +219,19 @@ class DatasetProcessorService:
             current_dataset_version: int,
     ) -> None:
         """
-        Determine whether to delete the previous version of dataset-create.
-        Retention flag either retain all datasets (True) or delete only the latest previous dataset-create (False).
+        Determine whether to delete the previous version of create_dataset.
+        Retention flag either retain all datasets (True) or delete only the latest previous create_dataset (False).
         This flow should be present until an updated data retention policy is formulated (Card SDSS-207).
-        Deletion of previous version of dataset-create happens when all of the following criteria are satisfied:
+        Deletion of previous version of create_dataset happens when all of the following criteria are satisfied:
         1. Retention flag is off (False)
-        2. The current version of dataset-create is > 1
-        3. The current dataset-create is successfully added to FireStore
+        2. The current version of create_dataset is > 1
+        3. The current create_dataset is successfully added to FireStore
         Parameters:
-        current_dataset_survey_id (str): Survey id of current processing dataset-create
-        current_dataset_period_id (str): Period id of current processing dataset-create
-        current_dataset_version (int): Version of current processing dataset-create
+        current_dataset_survey_id (str): Survey id of current processing create_dataset
+        current_dataset_period_id (str): Period id of current processing create_dataset
+        current_dataset_version (int): Version of current processing create_dataset
         """
-        logger.info("Determining whether to delete previous version of dataset-create...")
+        logger.info("Determining whether to delete previous version of create_dataset...")
 
         # Defensively set retention flag to True unless config explicitly stated as False
         retention_flag = True
@@ -250,16 +250,16 @@ class DatasetProcessorService:
 
         if previous_dataset_version_from_firestore < 1:
             logger.info(
-                "Previous dataset-create version deletion is not required. Process is skipped."
+                "Previous create_dataset version deletion is not required. Process is skipped."
             )
             return None
 
         if previous_dataset_version_from_firestore != current_dataset_version - 1:
             logger.error(
-                f"Previous dataset-create version calculated from firestore does not match."
+                f"Previous create_dataset version calculated from firestore does not match."
                 f" Expected version: '{current_dataset_version - 1}' Actual version in FireStore:"
                 f" '{previous_dataset_version_from_firestore}'."
-                f" New dataset-create may have not been saved properly. Process is skipped."
+                f" New create_dataset may have not been saved properly. Process is skipped."
             )
             return None
 
