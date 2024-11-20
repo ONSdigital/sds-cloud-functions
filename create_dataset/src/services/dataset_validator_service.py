@@ -1,10 +1,10 @@
 from json import JSONDecodeError
 
-from config.config_factory import config
-from logging_config import logging
+from config.config import config
+from config.logging_config import logging
 from models.dataset_models import DatasetError, RawDataset
-from repositories.buckets.dataset_bucket_repository import DatasetBucketRepository
-from services.shared.publisher_service import publisher_service
+from repositories.dataset_bucket_repository import DatasetBucketRepository
+from services.publisher_service import publisher_service
 
 logger = logging.getLogger(__name__)
 

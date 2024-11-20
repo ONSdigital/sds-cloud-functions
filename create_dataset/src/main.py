@@ -1,9 +1,9 @@
 import json
 
 import functions_framework
-from dataset.src.config.logging_config import logging
-from services.dataset.dataset_bucket_service import DatasetBucketService
-from services.dataset.dataset_processor_service import DatasetProcessorService
+from config.logging_config import logging
+from services.dataset_bucket_service import DatasetBucketService
+from services.dataset_processor_service import DatasetProcessorService
 
 logger = logging.getLogger(__name__)
 

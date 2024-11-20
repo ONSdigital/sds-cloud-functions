@@ -1,7 +1,8 @@
 import uuid
+from datetime import datetime
 
-from config.config_factory import config
-from logging_config import logging
+from config.config import config
+from config.logging_config import logging
 from dataset_models import (
     DatasetMetadata,
     DatasetMetadataWithoutId,
@@ -9,9 +10,8 @@ from dataset_models import (
     RawDatasetWithoutData,
     UnitDataset,
 )
-from repositories.firebase.dataset_firebase_repository import DatasetFirebaseRepository
+from repositories.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset_writer_service import DatasetWriterService
-from services.shared.datetime_service import DatetimeService
 from services.document_version_service import DocumentVersionService
 
 logger = logging.getLogger(__name__)
@@ -94,7 +94,7 @@ class DatasetProcessorService:
             **raw_dataset,
             "filename": filename,
             "sds_published_at": str(
-                DatetimeService.get_current_date_and_time().strftime(config.TIME_FORMAT)
+                datetime.now().strftime(config.TIME_FORMAT)
             ),
             "total_reporting_units": len(dataset_unit_data_collection),
             "sds_dataset_version": self._calculate_next_dataset_version(
