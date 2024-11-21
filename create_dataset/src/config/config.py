@@ -14,8 +14,8 @@ class Config:
     PUBLISH_DATASET_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_TOPIC_ID", "ons-sds-sandbox-01-publish-dataset")
     PUBLISH_DATASET_ERROR_TOPIC_ID = get_value_from_env("PUBLISH_DATASET_ERROR_TOPIC_ID", "ons-sds-sandbox-01-publish-dataset-error")
 
-    CONF = get_value_from_env("CONF", "ons-sds-sandbox-01-conf")
     LOG_EXECUTION_ID = get_value_from_env("LOG_EXECUTION_ID", "False")
     LOG_LEVEL = get_value_from_env("LOG_LEVEL", "INFO")
+
 
 config = Config()

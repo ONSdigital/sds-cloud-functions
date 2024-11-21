@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 class PublisherService:
     def __init__(self):
-        self.publisher = None if config.CONF == "unit" else PublisherClient()
+        self.publisher = PublisherClient()
 
     def publish_data_to_topic(
         self,
