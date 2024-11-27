@@ -18,7 +18,7 @@ class DatasetBucketRepository(BucketRepository):
         filename (str): name of file being queried.
 
         Returns:
-        RawDatasetWithMetadata: raw create_dataset from the bucket file as json.
+        RawDatasetWithMetadata: raw create-dataset from the bucket file as json.
         """
         return self.get_bucket_file_as_json(filename)
 
