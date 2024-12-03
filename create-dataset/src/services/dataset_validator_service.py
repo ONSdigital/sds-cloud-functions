@@ -128,7 +128,6 @@ class DatasetValidatorService:
             "survey_id",
             "period_id",
             "form_types",
-            "schema_version",
             "data",
         ]
 

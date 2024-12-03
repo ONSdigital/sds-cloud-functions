@@ -38,7 +38,14 @@ class PublisherService:
         try:
             self.publisher.get_topic(request={"topic": topic_path})
         except Exception as exc:
+            # Create topic automatically in local docker-dev environment
+            if config.CONF == "docker-dev":
+                self._create_topic(topic_path)
+                return
             raise RuntimeError("Topic not found") from exc
+
+    def _create_topic(self, topic_path) -> None:
+        self.publisher.create_topic(request={"name": topic_path})
 
 
 publisher_service = PublisherService()

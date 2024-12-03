@@ -10,7 +10,7 @@ class DatasetBucketRepository(BucketRepository):
     def __init__(self):
         self.bucket = bucket_loader.get_dataset_bucket()
 
-    def get_dataset_file_as_json(self, filename: str) -> RawDataset:
+    def get_dataset_file_as_json(self, filename: str) -> object:
         """
         Queries google bucket for file with a specific name and returns it as json.
 
@@ -18,7 +18,7 @@ class DatasetBucketRepository(BucketRepository):
         filename (str): name of file being queried.
 
         Returns:
-        RawDatasetWithMetadata: raw create-dataset from the bucket file as json.
+        object: raw create-dataset from the bucket file as json.
         """
         return self.get_bucket_file_as_json(filename)
 

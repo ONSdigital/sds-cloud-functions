@@ -9,7 +9,6 @@ class DatasetMetadataWithoutId:
     form_types: list[str]
     sds_published_at: str
     total_reporting_units: int
-    schema_version: str
     sds_dataset_version: int
     filename: str
     title: Optional[str] = None
@@ -23,7 +22,6 @@ class DatasetMetadata:
     form_types: list[str]
     sds_published_at: str
     total_reporting_units: int
-    schema_version: str
     sds_dataset_version: int
     filename: str
     title: Optional[str] = None
@@ -31,20 +29,17 @@ class DatasetMetadata:
 
 @dataclass
 class RawDatasetWithoutData:
-    dataset_id: str
     survey_id: str
     period_id: str
     form_types: list[str]
-    schema_version: str
     title: Optional[str] = None
 
 
+@dataclass
 class RawDataset:
-    dataset_id: str
     survey_id: str
     period_id: str
     form_types: list[str]
-    schema_version: str
     data: object
     title: Optional[str] = None
 
@@ -55,7 +50,6 @@ class UnitDataset:
     survey_id: str
     period_id: str
     form_types: list[str]
-    schema_version: str
     data: object
 
 

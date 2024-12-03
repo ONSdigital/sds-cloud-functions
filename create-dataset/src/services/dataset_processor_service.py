@@ -91,7 +91,9 @@ class DatasetProcessorService:
         logger.info("Adding metadata to new create-dataset...")
 
         dataset_metadata_without_id = {
-            **raw_dataset,
+            "survey_id": raw_dataset["survey_id"],
+            "period_id": raw_dataset["period_id"],
+            "form_types": raw_dataset["form_types"],
             "filename": filename,
             "sds_published_at": str(
                 datetime.now().strftime(config.TIME_FORMAT)
@@ -101,6 +103,10 @@ class DatasetProcessorService:
                 raw_dataset["survey_id"], raw_dataset["period_id"]
             ),
         }
+
+        # Add optional field "title" into metadata if it exists in the raw dataset
+        if "title" in raw_dataset:
+            dataset_metadata_without_id["title"] = raw_dataset["title"]
 
         logger.info("Metadata added to new create-dataset successfully.")
 
@@ -188,7 +194,6 @@ class DatasetProcessorService:
             "dataset_id": dataset_id,
             "survey_id": transformed_dataset_metadata["survey_id"],
             "period_id": transformed_dataset_metadata["period_id"],
-            "schema_version": transformed_dataset_metadata["schema_version"],
             "form_types": transformed_dataset_metadata["form_types"],
             "data": unit_data_item["unit_data"],
         }
