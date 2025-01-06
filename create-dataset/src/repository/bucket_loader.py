@@ -31,10 +31,8 @@ class BucketLoader:
             return None
 
         __storage_client = storage.Client(project=config.PROJECT_ID)
-        try:
-            bucket = __storage_client.get_bucket(
-                bucket_name,
-            )
+
+        bucket = __storage_client.get_bucket(bucket_name,)
 
         return bucket
 
