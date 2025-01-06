@@ -3,7 +3,7 @@ from json import JSONDecodeError
 from config.config import config
 from config.logging_config import logging
 from models.dataset_models import DatasetError, RawDataset
-from repositories.dataset_bucket_repository import DatasetBucketRepository
+from repository.dataset_bucket_repository import DatasetBucketRepository
 from services.publisher_service import publisher_service
 
 logger = logging.getLogger(__name__)

@@ -3,14 +3,14 @@ from datetime import datetime
 
 from config.config import config
 from config.logging_config import logging
-from dataset_models import (
+from models.dataset_models import (
     DatasetMetadata,
     DatasetMetadataWithoutId,
     RawDataset,
     RawDatasetWithoutData,
     UnitDataset,
 )
-from repositories.dataset_firebase_repository import DatasetFirebaseRepository
+from repository.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset_writer_service import DatasetWriterService
 from services.document_version_service import DocumentVersionService
 

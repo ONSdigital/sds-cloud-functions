@@ -1,6 +1,6 @@
 import json
 
-from config.config_factory import config
+from config.config import config
 from google.cloud.pubsub_v1 import PublisherClient
 from config.logging_config import logging
 from models.dataset_models import DatasetError, DatasetMetadata
