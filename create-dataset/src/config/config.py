@@ -1,4 +1,4 @@
-from config_helpers import get_value_from_env
+from config.config_helpers import get_value_from_env
 
 
 class Config:
