@@ -2,7 +2,7 @@ from config.config import config
 from firebase_admin import firestore
 from config.logging_config import logging
 from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
-from services.shared.byte_conversion_service import ByteConversionService
+from services.byte_conversion_service import ByteConversionService
 
 logger = logging.getLogger(__name__)
 
