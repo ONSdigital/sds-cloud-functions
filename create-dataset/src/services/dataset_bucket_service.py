@@ -1,4 +1,4 @@
-from config.config_factory import config
+from config.config import config
 from config.logging_config import logging
 from models.dataset_models import RawDataset
 from repositories.dataset_bucket_repository import DatasetBucketRepository

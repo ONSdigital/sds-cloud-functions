@@ -1,4 +1,4 @@
-from config.config_factory import config
+from config.config import config
 from firebase_admin import firestore
 from logging_config import logging
 from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
