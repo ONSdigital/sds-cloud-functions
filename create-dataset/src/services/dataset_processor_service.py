@@ -10,7 +10,7 @@ from dataset_models import (
     RawDatasetWithoutData,
     UnitDataset,
 )
-from repositories.dataset_firebase_repository import DatasetFirebaseRepository
+from repository.dataset_firebase_repository import DatasetFirebaseRepository
 from services.dataset_writer_service import DatasetWriterService
 from services.document_version_service import DocumentVersionService
 

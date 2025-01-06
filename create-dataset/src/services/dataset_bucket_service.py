@@ -1,7 +1,7 @@
 from config.config import config
 from config.logging_config import logging
 from models.dataset_models import RawDataset
-from repositories.dataset_bucket_repository import DatasetBucketRepository
+from repository.dataset_bucket_repository import DatasetBucketRepository
 from services.dataset_validator_service import DatasetValidatorService
 
 logger = logging.getLogger(__name__)
