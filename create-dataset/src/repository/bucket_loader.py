@@ -1,4 +1,3 @@
-import exception.exceptions as exception
 from config.config import config
 from google.cloud import exceptions, storage
 
