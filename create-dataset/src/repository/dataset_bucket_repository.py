@@ -1,4 +1,4 @@
-from logging_config import logging
+from config.logging_config import logging
 from models.dataset_models import RawDataset
 from repositories.bucket_loader import bucket_loader
 from repositories.bucket_repository import BucketRepository

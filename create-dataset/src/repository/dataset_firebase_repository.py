@@ -1,6 +1,6 @@
 from config.config import config
 from firebase_admin import firestore
-from logging_config import logging
+from config.logging_config import logging
 from models.dataset_models import DatasetMetadata, DatasetMetadataWithoutId, UnitDataset
 from services.shared.byte_conversion_service import ByteConversionService
 
