@@ -26,7 +26,9 @@ class DatasetBucketService:
 
         raw_dataset = self.dataset_bucket_repository.get_dataset_file_as_json(filename)
 
+        logger.info("Debug: Preparing to delete dataset file")
         if config.AUTODELETE_DATASET_BUCKET_FILE is True:
+            logger.info("Debug: Flag is True. Proceed to deletion")
             self.try_delete_bucket_file(filename)
 
         DatasetValidatorService.validate_raw_dataset(raw_dataset)
@@ -38,7 +40,9 @@ class DatasetBucketService:
         Tries to delete a file from the bucket, raises an error on failure.
         """
         try:
+            logger.info("Debug: Trying to delete dataset file")
             self.dataset_bucket_repository.delete_bucket_file(filename)
+            logger.info("Debug: Dataset file deleted successfully")
         except Exception as exc:
             logger.debug(
                 f"Failed to delete file {filename} from bucket {config.DATASET_BUCKET_NAME} with error: {exc}"
