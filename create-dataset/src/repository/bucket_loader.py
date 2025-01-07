@@ -31,8 +31,12 @@ class BucketLoader:
             return None
 
         __storage_client = storage.Client(project=config.PROJECT_ID)
-
-        bucket = __storage_client.get_bucket(bucket_name,)
+        try:
+            bucket = __storage_client.get_bucket(
+                bucket_name,
+            )
+        except exceptions.NotFound as exc:
+            raise RuntimeError("Bucket is not found.") from exc
 
         return bucket
 
