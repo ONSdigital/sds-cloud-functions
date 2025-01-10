@@ -5,6 +5,7 @@ from responder import Responder
 
 logger = logging.getLogger(__name__)
 
+
 @functions_framework.http
 def delete_dataset(requests):
     dataset_deleter = DatasetDeleter()
