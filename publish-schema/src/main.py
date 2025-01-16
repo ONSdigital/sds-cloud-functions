@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 @functions_framework.cloud_event
-def subscribe(cloud_event: CloudEvent) -> None:
+def publish_schema(cloud_event: CloudEvent) -> None:
     """
     Method to retrieve, verify, and publish a schema to SDS.
     
@@ -140,3 +140,38 @@ def verify_version(filepath, schema) -> bool:
     else:
         logger.error(f"Schema version for {filepath} does not match. Expected {filename}, got {schema['properties']['schema_version']['const']}")
     return False
+
+def check_duplicate_versions(schema, survey_id) -> bool:
+    """
+    Method to call the schema_metadata endpoint and check that the schema_version for the new schema is not already present in SDS.
+
+    Parameters:
+        schema (dict): the schema to be posted.
+        survey_id (str): the survey ID.
+
+    Returns:
+        bool: True if there are no duplicate versions, False otherwise.
+    """
+    logger.info(f"Checking for duplicate schema versions for survey {survey_id}")
+
+    session = setup_session()
+    headers = generate_headers()
+    response = session.get(
+        f"{Config.API_URL}/v1/schema_metadata?survey_id={survey_id}",
+        headers=headers,
+    )
+    if response.status_code != 200:
+        logger.error(f"Failed to fetch schema metadata for survey {survey_id}. Cannot verify schema version. Exiting.")
+        logger.error(response.text)
+        return False
+
+    metadata = response.json()
+    new_schema_version = schema["properties"]["schema_version"]["const"]
+
+    for version in metadata:
+        if new_schema_version == version["schema_version"]:
+            logger.error(f"Schema version {new_schema_version} already exists for survey {survey_id}")
+            return False
+    logger.info(f"Verified schema_version {new_schema_version} for survey {survey_id} is unique.")
+    return True
+    
