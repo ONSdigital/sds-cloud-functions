@@ -104,7 +104,7 @@ def post_schema(schema, survey_id) -> requests.Response:
     headers = generate_headers()
     logger.info(f"Posting schema for survey {survey_id}")
     response = session.post(
-        f"{Config.API_URL}{Config.POST_SCHEMA_ENDPOINT}{survey_id}",
+        f"{Config.SDS_URL}{Config.POST_SCHEMA_ENDPOINT}{survey_id}",
         json=schema,
         headers=headers,
     )
@@ -196,7 +196,7 @@ def get_schema_metadata(survey_id) -> dict:
     headers = generate_headers()
     try:
         response = session.get(
-            f"{Config.API_URL}{Config.GET_SCHEMA_METADATA_ENDPOINT}{survey_id}",
+            f"{Config.SDS_URL}{Config.GET_SCHEMA_METADATA_ENDPOINT}{survey_id}",
             headers=headers,
         )
         response.raise_for_status()
