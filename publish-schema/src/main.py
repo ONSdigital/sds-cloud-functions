@@ -2,7 +2,7 @@ import base64
 from cloudevents.http import CloudEvent
 import functions_framework
 from http_helper import generate_headers, setup_session
-from config import Config
+from config import config
 import requests
 import json
 import logging
@@ -55,7 +55,7 @@ def fetch_raw_schema(path) -> dict:
         dict: the schema JSON.
     """
 
-    url = Config.GITHUB_URL + path
+    url = config.GITHUB_URL + path
     logger.info(f"Fetching schema from {url}")
     try:
         response = requests.get(url)
@@ -104,7 +104,7 @@ def post_schema(schema, survey_id) -> requests.Response:
     headers = generate_headers()
     logger.info(f"Posting schema for survey {survey_id}")
     response = session.post(
-        f"{Config.SDS_URL}{Config.POST_SCHEMA_ENDPOINT}{survey_id}",
+        f"{config.SDS_URL}{config.POST_SCHEMA_ENDPOINT}{survey_id}",
         json=schema,
         headers=headers,
     )
@@ -196,7 +196,7 @@ def get_schema_metadata(survey_id) -> dict:
     headers = generate_headers()
     try:
         response = session.get(
-            f"{Config.SDS_URL}{Config.GET_SCHEMA_METADATA_ENDPOINT}{survey_id}",
+            f"{config.SDS_URL}{config.GET_SCHEMA_METADATA_ENDPOINT}{survey_id}",
             headers=headers,
         )
         response.raise_for_status()

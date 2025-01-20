@@ -2,7 +2,7 @@ import google.oauth2.id_token
 from google.cloud import secretmanager
 import requests
 from logging_config import logging
-from config import Config
+from config import config
 
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
@@ -59,6 +59,6 @@ def access_secret_version() -> str:
     Access the secret version from Google Cloud Secret Manager.
     """
     client = secretmanager.SecretManagerServiceClient()
-    name = f"projects/{Config.PROJECT_ID}/secrets/{Config.SECRET_ID}/versions/latest"
+    name = f"projects/{config.PROJECT_ID}/secrets/{config.SECRET_ID}/versions/latest"
     response = client.access_secret_version(name=name)
     return response.payload.data.decode("UTF-8")
