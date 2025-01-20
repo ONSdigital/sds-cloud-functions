@@ -55,7 +55,7 @@ def fetch_raw_schema(path) -> dict:
         dict: the schema JSON.
     """
 
-    url = config.GITHUB_URL + path
+    url = config.GITHUB_SCHEMA_URL + path
     logger.info(f"Fetching schema from {url}")
     try:
         response = requests.get(url)
