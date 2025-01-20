@@ -9,15 +9,16 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 @functions_framework.cloud_event
 def publish_schema(cloud_event: CloudEvent) -> None:
     """
     Method to retrieve, verify, and publish a schema to SDS.
-    
+
     Parameters:
         cloud_event (CloudEvent): the CloudEvent containing the message.
     """
-    filepath = base64.b64decode(cloud_event.data["message"]["data"]).decode('utf-8')
+    filepath = base64.b64decode(cloud_event.data["message"]["data"]).decode("utf-8")
 
     schema = fetch_raw_schema(filepath)
 
@@ -30,6 +31,11 @@ def publish_schema(cloud_event: CloudEvent) -> None:
         return
 
     survey_id = fetch_survey_id(schema)
+
+    if not check_duplicate_versions(schema, survey_id):
+        logger.error("Stopping execution due to duplicate schema version.")
+        return
+
     response = post_schema(schema, survey_id)
     if response.status_code == 200:
         logger.info(f"Schema {filepath} posted successfully")
@@ -41,7 +47,7 @@ def publish_schema(cloud_event: CloudEvent) -> None:
 def fetch_raw_schema(path) -> dict:
     """
     Method to fetch the schema from the ONSdigital GitHub repository.
-    
+
     Parameters:
         path (str): the path to the schema JSON.
 
@@ -49,7 +55,7 @@ def fetch_raw_schema(path) -> dict:
         dict: the schema JSON.
     """
 
-    url = f'https://raw.githubusercontent.com/ONSdigital/sds-prototype-schema/refs/heads/SDSS-823-schema-publication-automation-spike/{path}'
+    url = Config.GITHUB_URL + path
     logger.info(f"Fetching schema from {url}")
     try:
         response = requests.get(url)
@@ -58,7 +64,7 @@ def fetch_raw_schema(path) -> dict:
         logger.error(f"Failed to fetch schema from {url}")
         logger.error(e)
         return None
-    
+
     try:
         schema = response.json()
     except json.JSONDecodeError as e:
@@ -71,7 +77,7 @@ def fetch_raw_schema(path) -> dict:
 def fetch_survey_id(schema) -> str:
     """
     Method to fetch the survey ID from the schema JSON.
-    
+
     Parameters:
         schema (dict): the schema JSON.
     """
@@ -98,11 +104,12 @@ def post_schema(schema, survey_id) -> requests.Response:
     headers = generate_headers()
     logger.info(f"Posting schema for survey {survey_id}")
     response = session.post(
-        f"{Config.API_URL}/v1/schema?survey_id={survey_id}",
+        f"{Config.API_URL}{Config.POST_SCHEMA_ENDPOINT}{survey_id}",
         json=schema,
         headers=headers,
     )
     return response
+
 
 def split_filename(path) -> str:
     """
@@ -138,8 +145,11 @@ def verify_version(filepath, schema) -> bool:
         logger.info(f"Schema version for {filename} verified.")
         return True
     else:
-        logger.error(f"Schema version for {filepath} does not match. Expected {filename}, got {schema['properties']['schema_version']['const']}")
+        logger.error(
+            f"Schema version for {filepath} does not match. Expected {filename}, got {schema['properties']['schema_version']['const']}"
+        )
     return False
+
 
 def check_duplicate_versions(schema, survey_id) -> bool:
     """
@@ -152,26 +162,46 @@ def check_duplicate_versions(schema, survey_id) -> bool:
     Returns:
         bool: True if there are no duplicate versions, False otherwise.
     """
-    logger.info(f"Checking for duplicate schema versions for survey {survey_id}")
+    logger.debug(f"Checking for duplicate schema versions for survey {survey_id}")
+
+    logger.debug(f"Fetching schema metadata for survey {survey_id}")
+    schema_metadata = get_schema_metadata(survey_id)
+
+    new_schema_version = schema["properties"]["schema_version"]["const"]
+
+    for version in schema_metadata:
+        if new_schema_version == version["schema_version"]:
+            logger.error(
+                f"Schema version {new_schema_version} already exists for survey {survey_id}"
+            )
+            return False
+    logger.info(
+        f"Verified schema_version {new_schema_version} for survey {survey_id} is unique."
+    )
+    return True
+
+
+def get_schema_metadata(survey_id) -> dict:
+    """
+    Method to call the schema_metadata endpoint and return the metadata for the survey.
+
+    Parameters:
+        survey_id (str): the survey_id of the schema.
+
+    Returns:
+        dict: the metadata for the survey.
+    """
 
     session = setup_session()
     headers = generate_headers()
-    response = session.get(
-        f"{Config.API_URL}/v1/schema_metadata?survey_id={survey_id}",
-        headers=headers,
-    )
-    if response.status_code != 200:
-        logger.error(f"Failed to fetch schema metadata for survey {survey_id}. Cannot verify schema version. Exiting.")
-        logger.error(response.text)
-        return False
-
-    metadata = response.json()
-    new_schema_version = schema["properties"]["schema_version"]["const"]
-
-    for version in metadata:
-        if new_schema_version == version["schema_version"]:
-            logger.error(f"Schema version {new_schema_version} already exists for survey {survey_id}")
-            return False
-    logger.info(f"Verified schema_version {new_schema_version} for survey {survey_id} is unique.")
-    return True
-    
+    try:
+        response = session.get(
+            f"{Config.API_URL}{Config.GET_SCHEMA_METADATA_ENDPOINT}{survey_id}",
+            headers=headers,
+        )
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Failed to fetch schema metadata for survey {survey_id}")
+        logger.error(e)
+        return None
+    return response.json()
