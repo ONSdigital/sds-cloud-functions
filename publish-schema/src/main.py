@@ -162,34 +162,37 @@ def check_duplicate_versions(schema, survey_id) -> bool:
     Returns:
         bool: True if there are no duplicate versions, False otherwise.
     """
-    logger.debug(f"Checking for duplicate schema versions for survey {survey_id}")
+    logger.info(f"Checking for duplicate schema versions for survey {survey_id}")
 
     logger.debug(f"Fetching schema metadata for survey {survey_id}")
     schema_metadata = get_schema_metadata(survey_id)
 
+    if schema_metadata.status_code == 404:
+        return True
+
     new_schema_version = schema["properties"]["schema_version"]["const"]
 
-    for version in schema_metadata:
+    for version in schema_metadata.json():
         if new_schema_version == version["schema_version"]:
             logger.error(
                 f"Schema version {new_schema_version} already exists for survey {survey_id}"
             )
             return False
     logger.info(
-        f"Verified schema_version {new_schema_version} for survey {survey_id} is unique."
+        f"Verified schema_version {new_schema_version} for survey {survey_id} is not present in SDS. Continuing..."
     )
     return True
 
 
-def get_schema_metadata(survey_id) -> dict:
+def get_schema_metadata(survey_id) -> requests.Response:
     """
-    Method to call the schema_metadata endpoint and return the metadata for the survey.
+    Method to call the schema_metadata endpoint and return the response for the survey.
 
     Parameters:
         survey_id (str): the survey_id of the schema.
 
     Returns:
-        dict: the metadata for the survey.
+        requests.Response: the response from the schema_metadata endpoint.
     """
 
     session = setup_session()
@@ -201,7 +204,11 @@ def get_schema_metadata(survey_id) -> dict:
         )
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        logger.error(f"Failed to fetch schema metadata for survey {survey_id}")
-        logger.error(e)
-        return None
-    return response.json()
+        if response.status_code == 404:
+            logger.debug(f"Schema metadata for survey {survey_id} not found, new survey added.")
+            return response
+        else:
+            logger.error(f"Failed to fetch schema metadata for survey {survey_id}")
+            logger.error(e)
+            exit(1)
+    return response
