@@ -44,7 +44,7 @@ def publish_schema(cloud_event: CloudEvent) -> None:
         logger.error(response.text)
 
 
-def fetch_raw_schema(path) -> dict:
+def fetch_raw_schema(path: str) -> dict:
     """
     Method to fetch the schema from the ONSdigital GitHub repository.
 
@@ -74,7 +74,7 @@ def fetch_raw_schema(path) -> dict:
     return schema
 
 
-def fetch_survey_id(schema) -> str:
+def fetch_survey_id(schema: dict) -> str:
     """
     Method to fetch the survey ID from the schema JSON.
 
@@ -89,7 +89,7 @@ def fetch_survey_id(schema) -> str:
     return survey_id
 
 
-def post_schema(schema, survey_id) -> requests.Response:
+def post_schema(schema: dict, survey_id: str) -> requests.Response:
     """
     Method to post the schema to the API.
 
@@ -111,7 +111,7 @@ def post_schema(schema, survey_id) -> requests.Response:
     return response
 
 
-def split_filename(path) -> str:
+def split_filename(path: str) -> str:
     """
     Method to split the filename without extension from the path.
 
@@ -128,7 +128,7 @@ def split_filename(path) -> str:
         exit(1)
 
 
-def verify_version(filepath, schema) -> bool:
+def verify_version(filepath: str, schema: dict) -> bool:
     """
     Method to verify the schema version in the JSON matches the filename.
 
@@ -151,7 +151,7 @@ def verify_version(filepath, schema) -> bool:
     return False
 
 
-def check_duplicate_versions(schema, survey_id) -> bool:
+def check_duplicate_versions(schema: dict, survey_id: str) -> bool:
     """
     Method to call the schema_metadata endpoint and check that the schema_version for the new schema is not already present in SDS.
 
@@ -184,7 +184,7 @@ def check_duplicate_versions(schema, survey_id) -> bool:
     return True
 
 
-def get_schema_metadata(survey_id) -> requests.Response:
+def get_schema_metadata(survey_id: str) -> requests.Response:
     """
     Method to call the schema_metadata endpoint and return the response for the survey.
 
