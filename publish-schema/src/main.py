@@ -6,25 +6,21 @@ from config import config
 import requests
 import json
 import logging
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
-
 
 @functions_framework.cloud_event
 def publish_schema(cloud_event: CloudEvent) -> None:
     """
-    Method to retrieve, verify, and publish a schema to SDS.
+    Retrieve, verify, and publish a schema to SDS.
 
     Parameters:
-        cloud_event (CloudEvent): the CloudEvent containing the message.
+        cloud_event (CloudEvent): the CloudEvent containing the  Pub/Sub message.
     """
     filepath = base64.b64decode(cloud_event.data["message"]["data"]).decode("utf-8")
 
     schema = fetch_raw_schema(filepath)
-
-    if schema is None:
-        logger.error("Stopping execution due to failed schema fetch.")
-        return
 
     if not verify_version(filepath, schema):
         logger.error("Stopping execution due to schema version mismatch.")
@@ -36,17 +32,12 @@ def publish_schema(cloud_event: CloudEvent) -> None:
         logger.error("Stopping execution due to duplicate schema version.")
         return
 
-    response = post_schema(schema, survey_id)
-    if response.status_code == 200:
-        logger.info(f"Schema {filepath} posted successfully")
-    else:
-        logger.error(f"Failed to post schema for survey {survey_id}")
-        logger.error(response.text)
+    post_schema(schema, survey_id)
 
 
 def fetch_raw_schema(path: str) -> dict:
     """
-    Method to fetch the schema from the ONSdigital GitHub repository.
+    Fetches the schema from the ONSdigital GitHub repository.
 
     Parameters:
         path (str): the path to the schema JSON.
@@ -54,29 +45,26 @@ def fetch_raw_schema(path: str) -> dict:
     Returns:
         dict: the schema JSON.
     """
-
     url = config.GITHUB_SCHEMA_URL + path
     logger.info(f"Fetching schema from {url}")
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
         response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Failed to fetch schema from {url}")
-        logger.error(e)
-        return None
-
-    try:
         schema = response.json()
-    except json.JSONDecodeError as e:
-        logger.error("Failed to decode schema JSON")
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Failed to fetch schema from {url} - exiting...")
         logger.error(e)
-        return None
+        exit(1)
+    except json.JSONDecodeError as e:
+        logger.error("Failed to decode schema JSON. Exiting...")
+        logger.error(e)
+        exit(1)
     return schema
 
 
 def fetch_survey_id(schema: dict) -> str:
     """
-    Method to fetch the survey ID from the schema JSON.
+    Fetches the survey ID from the schema JSON.
 
     Parameters:
         schema (dict): the schema JSON.
@@ -86,34 +74,40 @@ def fetch_survey_id(schema: dict) -> str:
     except KeyError:
         logger.error("Survey ID not found in schema")
         exit(1)
+    except IndexError:
+        logger.error("Survey ID not found in schema")
+        exit(1)
     return survey_id
 
 
-def post_schema(schema: dict, survey_id: str) -> requests.Response:
+def post_schema(schema: dict, survey_id: str) -> None:
     """
-    Method to post the schema to the API.
+    Posts the schema to SDS.
 
     Parameters:
         schema (dict): the schema to be posted.
         survey_id (str): the survey ID.
-
-    Returns:
-        requests.Response: the response from the post schema endpoint.
     """
     session = setup_session()
     headers = generate_headers()
     logger.info(f"Posting schema for survey {survey_id}")
-    response = session.post(
-        f"{config.SDS_URL}{config.POST_SCHEMA_ENDPOINT}{survey_id}",
-        json=schema,
-        headers=headers,
-    )
-    return response
+    try:
+        response = session.post(
+            f"{config.SDS_URL}{config.POST_SCHEMA_ENDPOINT}{survey_id}",
+            json=schema,
+            headers=headers,
+        )
+        response.raise_for_status()
+        logger.info(f"Schema posted for survey {survey_id}")
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Failed to post schema for survey {survey_id}. Status code: {response.status_code}")
+        logger.error(e)
+        exit(1)
 
 
 def split_filename(path: str) -> str:
     """
-    Method to split the filename without extension from the path.
+    Splits the filename without extension from the path.
 
     Parameters:
         path (str): the path to the schema JSON.
@@ -122,9 +116,10 @@ def split_filename(path: str) -> str:
         str: the filename.
     """
     try:
-        return path.split("/")[-1].split(".")[0]
-    except IndexError:
+        return Path(path).stem
+    except Exception as e:
         logger.error(f"Failed to split filename from {path}.")
+        logger.error(e)
         exit(1)
 
 
@@ -194,7 +189,6 @@ def get_schema_metadata(survey_id: str) -> requests.Response:
     Returns:
         requests.Response: the response from the schema_metadata endpoint.
     """
-
     session = setup_session()
     headers = generate_headers()
     try:

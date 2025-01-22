@@ -3,7 +3,6 @@ from google.cloud import secretmanager
 import requests
 from logging_config import logging
 from config import config
-
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
@@ -11,7 +10,7 @@ logging = logging.getLogger(__name__)
 
 def setup_session() -> requests.Session:
     """
-    Method to setup a http/s session to facilitate testing.
+    Setup a http/s session to facilitate testing.
 
     Parameters:
         None
@@ -30,7 +29,7 @@ def setup_session() -> requests.Session:
 
 def generate_headers() -> dict[str, str]:
     """
-    Method to create headers for authentication if connecting to a remote version of the API.
+    Create headers for authentication through SDS load balancer.
 
     Parameters:
         None
