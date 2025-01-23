@@ -1,14 +1,16 @@
 import base64
-from cloudevents.http import CloudEvent
-import functions_framework
-from http_helper import generate_headers, setup_session
-from config import config
-import requests
 import json
 import logging
 from pathlib import Path
 
+import functions_framework
+import requests
+from cloudevents.http import CloudEvent
+from config import config
+from http_helper import generate_headers, setup_session
+
 logger = logging.getLogger(__name__)
+
 
 @functions_framework.cloud_event
 def publish_schema(cloud_event: CloudEvent) -> None:
@@ -22,17 +24,16 @@ def publish_schema(cloud_event: CloudEvent) -> None:
 
     schema = fetch_raw_schema(filepath)
 
-    if not verify_version(filepath, schema):
-        logger.error("Stopping execution due to schema version mismatch.")
-        return
+    if verify_version(filepath, schema):
+        logger.info(f"Schema version for {filepath} verified.")
 
     survey_id = fetch_survey_id(schema)
 
     if not check_duplicate_versions(schema, survey_id):
-        logger.error("Stopping execution due to duplicate schema version.")
+        raise RuntimeError("Stopping execution due to duplicate schema version.")
         return
 
-    post_schema(schema, survey_id)
+    post_schema(schema, survey_id, filepath)
 
 
 def fetch_raw_schema(path: str) -> dict:
@@ -52,13 +53,9 @@ def fetch_raw_schema(path: str) -> dict:
         response.raise_for_status()
         schema = response.json()
     except requests.exceptions.RequestException as e:
-        logger.error(f"Failed to fetch schema from {url} - exiting...")
-        logger.error(e)
-        exit(1)
+        raise RuntimeError(f"Failed to fetch schema from {url} - exiting...") from e
     except json.JSONDecodeError as e:
-        logger.error("Failed to decode schema JSON. Exiting...")
-        logger.error(e)
-        exit(1)
+        raise RuntimeError(f"Failed to decode JSON from {url} - exiting...") from e
     return schema
 
 
@@ -71,22 +68,19 @@ def fetch_survey_id(schema: dict) -> str:
     """
     try:
         survey_id = schema["properties"]["survey_id"]["enum"][0]
-    except KeyError:
-        logger.error("Survey ID not found in schema")
-        exit(1)
-    except IndexError:
-        logger.error("Survey ID not found in schema")
-        exit(1)
+    except (KeyError, IndexError) as e:
+        raise RuntimeError("Failed to fetch survey_id from schema JSON.") from e
     return survey_id
 
 
-def post_schema(schema: dict, survey_id: str) -> None:
+def post_schema(schema: dict, survey_id: str, filepath: str) -> None:
     """
     Posts the schema to SDS.
 
     Parameters:
         schema (dict): the schema to be posted.
         survey_id (str): the survey ID.
+        filepath (str): the path to the schema JSON.
     """
     session = setup_session()
     headers = generate_headers()
@@ -99,10 +93,10 @@ def post_schema(schema: dict, survey_id: str) -> None:
         )
         response.raise_for_status()
         logger.info(f"Schema posted for survey {survey_id}")
-    except requests.exceptions.RequestException as e:
-        logger.error(f"Failed to post schema for survey {survey_id}. Status code: {response.status_code}")
-        logger.error(e)
-        exit(1)
+    except requests.exceptions.RequestException:
+        raise RuntimeError(
+            f"Failed to post file: {filepath} for survey: {survey_id}. Status code: {response.status_code}"
+        ) from None
 
 
 def split_filename(path: str) -> str:
@@ -118,9 +112,7 @@ def split_filename(path: str) -> str:
     try:
         return Path(path).stem
     except Exception as e:
-        logger.error(f"Failed to split filename from {path}.")
-        logger.error(e)
-        exit(1)
+        raise RuntimeError(f"Failed to split filename from path: {path}") from e
 
 
 def verify_version(filepath: str, schema: dict) -> bool:
@@ -132,18 +124,16 @@ def verify_version(filepath: str, schema: dict) -> bool:
         schema (dict): the schema to be posted.
 
     Returns:
-        bool: True if the schema version matches the filename, False otherwise.
+        bool: True if the schema version matches the filename.
     """
     logger.info(f"Verifying schema version for {filepath}")
     filename = split_filename(filepath)
     if schema["properties"]["schema_version"]["const"] == filename:
-        logger.info(f"Schema version for {filename} verified.")
         return True
     else:
-        logger.error(
+        raise RuntimeError(
             f"Schema version for {filepath} does not match. Expected {filename}, got {schema['properties']['schema_version']['const']}"
         )
-    return False
 
 
 def check_duplicate_versions(schema: dict, survey_id: str) -> bool:
@@ -199,10 +189,10 @@ def get_schema_metadata(survey_id: str) -> requests.Response:
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
         if response.status_code == 404:
-            logger.debug(f"Schema metadata for survey {survey_id} not found, new survey added.")
+            logger.debug(
+                f"Schema metadata for survey {survey_id} not found, new survey added."
+            )
             return response
         else:
-            logger.error(f"Failed to fetch schema metadata for survey {survey_id}")
-            logger.error(e)
-            exit(1)
+            raise RuntimeError(f"Failed to fetch schema metadata for survey {survey_id}") from e
     return response

@@ -1,12 +1,13 @@
 import google.oauth2.id_token
-from google.cloud import secretmanager
 import requests
-from logging_config import logging
 from config import config
+from google.cloud import secretmanager
+from logging_config import logging
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 logging = logging.getLogger(__name__)
+
 
 def setup_session() -> requests.Session:
     """
@@ -53,6 +54,7 @@ def generate_headers() -> dict[str, str]:
 
     return headers
 
+
 def access_secret_version() -> str:
     """
     Access the secret version from Google Cloud Secret Manager.
@@ -60,4 +62,4 @@ def access_secret_version() -> str:
     client = secretmanager.SecretManagerServiceClient()
     name = f"projects/{config.PROJECT_ID}/secrets/{config.SECRET_ID}/versions/latest"
     response = client.access_secret_version(name=name)
-    return response.payload.data.decode("UTF-8")
+    return response.payload.data.decode("UTF-8")["web"]["client_id"]
