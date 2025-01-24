@@ -31,7 +31,6 @@ def publish_schema(cloud_event: CloudEvent) -> None:
 
     if not check_duplicate_versions(schema, survey_id):
         raise RuntimeError("Stopping execution due to duplicate schema version.")
-        return
 
     post_schema(schema, survey_id, filepath)
 
@@ -93,10 +92,10 @@ def post_schema(schema: dict, survey_id: str, filepath: str) -> None:
         )
         response.raise_for_status()
         logger.info(f"Schema posted for survey {survey_id}")
-    except requests.exceptions.RequestException:
+    except requests.exceptions.RequestException as e:
         raise RuntimeError(
             f"Failed to post file: {filepath} for survey: {survey_id}. Status code: {response.status_code}"
-        ) from None
+        ) from e
 
 
 def split_filename(path: str) -> str:
@@ -128,12 +127,17 @@ def verify_version(filepath: str, schema: dict) -> bool:
     """
     logger.info(f"Verifying schema version for {filepath}")
     filename = split_filename(filepath)
-    if schema["properties"]["schema_version"]["const"] == filename:
-        return True
-    else:
-        raise RuntimeError(
+    try:
+        if schema["properties"]["schema_version"]["const"] == filename:
+            return True
+        else:
+            raise RuntimeError(
             f"Schema version for {filepath} does not match. Expected {filename}, got {schema['properties']['schema_version']['const']}"
         )
+    except KeyError as e:
+        raise RuntimeError(
+            f"Schema version not found in {filepath}."
+        ) from e
 
 
 def check_duplicate_versions(schema: dict, survey_id: str) -> bool:
@@ -162,7 +166,7 @@ def check_duplicate_versions(schema: dict, survey_id: str) -> bool:
             logger.error(
                 f"Schema version {new_schema_version} already exists for survey {survey_id}"
             )
-            return False
+            raise RuntimeError("Stopping execution due to duplicate schema version.")
     logger.info(
         f"Verified schema_version {new_schema_version} for survey {survey_id} is not present in SDS. Continuing..."
     )
