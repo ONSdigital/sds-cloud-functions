@@ -91,7 +91,7 @@ def post_schema(schema: dict, survey_id: str, filepath: str) -> None:
             headers=headers,
         )
         response.raise_for_status()
-        logger.info(f"Schema posted for survey {survey_id}")
+        logger.info(f"Schema: {filepath} posted for survey {survey_id}")
     except requests.exceptions.RequestException as e:
         raise RuntimeError(
             f"Failed to post file: {filepath} for survey: {survey_id}. Status code: {response.status_code}"
