@@ -1,7 +1,9 @@
+import json
 import google.oauth2.id_token
 import requests
 from config import config
 from google.cloud import secretmanager
+from google.api_core.exceptions import GoogleAPIError
 from logging_config import logging
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
@@ -58,8 +60,25 @@ def generate_headers() -> dict[str, str]:
 def access_secret_version() -> str:
     """
     Access the secret version from Google Cloud Secret Manager.
+
+    Returns:
+        str: The OAuth client ID.
+
+    Raises:
+        RuntimeError: If there is an error accessing the secret or parsing the JSON data.
     """
-    client = secretmanager.SecretManagerServiceClient()
-    name = f"projects/{config.PROJECT_ID}/secrets/{config.SECRET_ID}/versions/latest"
-    response = client.access_secret_version(name=name)
-    return response.payload.data.decode("UTF-8")["web"]["client_id"]
+    try:
+        client = secretmanager.SecretManagerServiceClient()
+        name = f"projects/{config.PROJECT_ID}/secrets/{config.SECRET_ID}/versions/latest"
+        response = client.access_secret_version(name=name)
+        secret_data = response.payload.data.decode("UTF-8")
+        secret_json = json.loads(secret_data)
+        oauth_client_id = secret_json["web"]["client_id"]
+        return oauth_client_id
+    except GoogleAPIError as e:
+        logging.error(f"Failed to access secret version from Secret Manager: {e}")
+        raise RuntimeError("Failed to access secret version") from e
+    except json.JSONDecodeError as e:
+        raise RuntimeError(f"Failed to parse secret JSON data from {config.SECRET_ID}.") from e
+    except KeyError as e:
+        raise RuntimeError("Missing expected key in secret JSON data.") from e
