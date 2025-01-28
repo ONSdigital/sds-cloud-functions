@@ -64,6 +64,9 @@ def fetch_survey_id(schema: dict) -> str:
 
     Parameters:
         schema (dict): the schema JSON.
+
+    Returns:
+        str: the survey ID.
     """
     try:
         survey_id = schema["properties"]["survey_id"]["enum"][0]
@@ -131,7 +134,7 @@ def verify_version(filepath: str, schema: dict) -> bool:
         if schema["properties"]["schema_version"]["const"] == filename:
             return True
         else:
-            raise RuntimeError(
+            logger.error(
             f"Schema version for {filepath} does not match. Expected {filename}, got {schema['properties']['schema_version']['const']}"
         )
     except KeyError as e:
