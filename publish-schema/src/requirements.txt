@@ -1,6 +1,7 @@
 cloudevents==1.11.0
 google-auth
 google-cloud-secret-manager
+google-cloud-pubsub
 requests
 pydantic_settings==2.1.0
 python-dotenv==1.0.0

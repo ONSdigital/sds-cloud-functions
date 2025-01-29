@@ -16,6 +16,9 @@ class Config:
     GET_SCHEMA_METADATA_ENDPOINT = get_value_from_env(
         "GET_SCHEMA_METADATA_URL", "/v1/schema_metadata?survey_id="
     )
+    PUBLISH_SCHEMA_ERROR_TOPIC_ID = get_value_from_env(
+        "PUBLISH_SCHEMA_ERROR_TOPIC_ID", "publish-schema-error"
+    )
 
 
 config = Config()

@@ -7,7 +7,8 @@ import functions_framework
 import requests
 from cloudevents.http import CloudEvent
 from config import config
-from http_helper import generate_headers, setup_session
+from http_manager import http_manager
+from pub_sub_error_message import PubSubErrorMessage
 
 logger = logging.getLogger(__name__)
 
@@ -51,10 +52,11 @@ def fetch_raw_schema(path: str) -> dict:
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         schema = response.json()
-    except requests.exceptions.RequestException:
-        logger.error(f"Failed to fetch schema from {url} - exiting...")
-    except json.JSONDecodeError:
-        logger.error(f"Failed to decode JSON from {url} - exiting...")
+    except (requests.exceptions.RequestException, json.JSONDecodeError):
+        message = PubSubErrorMessage(
+            "Exception", "Failed to fetch schema from GitHub.", path
+        )
+        logger.error(f"{message.error_message} {url}")
     return schema
 
 
@@ -71,7 +73,10 @@ def fetch_survey_id(schema: dict) -> str:
     try:
         survey_id = schema["properties"]["survey_id"]["enum"][0]
     except (KeyError, IndexError):
-        logger.error("Failed to fetch survey_id from schema JSON.")
+        message = PubSubErrorMessage(
+            "SurveyIdError", "Failed to fetch survey_id from schema JSON.", "N/A"
+        )
+        logger.error(message.error_message)
         exit(1)
     return survey_id
 
@@ -85,19 +90,18 @@ def post_schema(schema: dict, survey_id: str, filepath: str) -> None:
         survey_id (str): the survey ID.
         filepath (str): the path to the schema JSON.
     """
-    session = setup_session()
-    headers = generate_headers()
     logger.info(f"Posting schema for survey {survey_id}")
-    try:
-        response = session.post(
-            f"{config.SDS_URL}{config.POST_SCHEMA_ENDPOINT}{survey_id}",
-            json=schema,
-            headers=headers,
+    url = f"{config.SDS_URL}{config.POST_SCHEMA_ENDPOINT}{survey_id}"
+    response = http_manager.make_post_request(url, schema)
+    if response.status_code != 200:
+        PubSubErrorMessage(
+            "SchemaPostError",
+            f"Failed to post schema for survey {survey_id}",
+            filepath,
         )
-        response.raise_for_status()
+        logger.error(f"Failed to post schema for survey {survey_id}")
+    else:
         logger.info(f"Schema: {filepath} posted for survey {survey_id}")
-    except requests.exceptions.RequestException:
-        logger.error(f"Failed to post file: {filepath} for survey: {survey_id}. Status code: {response.status_code}")
 
 
 def split_filename(path: str) -> str:
@@ -113,7 +117,10 @@ def split_filename(path: str) -> str:
     try:
         return Path(path).stem
     except Exception:
-        logger.error(f"Failed to split filename from path: {path}")
+        message = PubSubErrorMessage(
+            "Exception", "Failed to split filename from path.", path
+        )
+        logger.error(message.error_message)
 
 
 def verify_version(filepath: str, schema: dict) -> bool:
@@ -133,12 +140,18 @@ def verify_version(filepath: str, schema: dict) -> bool:
         if schema["properties"]["schema_version"]["const"] == filename:
             return True
         else:
-            logger.error(
-            f"Schema version for {filepath} does not match. Expected {filename}, got {schema['properties']['schema_version']['const']}"
+            message = PubSubErrorMessage(
+                "SchemaVersionError",
+                f"Schema version for {filepath} does not match. Expected {filename}, got {schema['properties']['schema_version']['const']}",
+                filepath,
             )
+            logger.error(message.error_message)
             exit(1)
     except KeyError:
-        logger.error(f"Schema version not found in {filepath}.")
+        message = PubSubErrorMessage(
+            "SchemaVersionError", f"Schema version not found in {filepath}.", filepath
+        )
+        logger.error(message.error_message)
         exit(1)
 
 
@@ -153,11 +166,9 @@ def check_duplicate_versions(schema: dict, survey_id: str) -> bool:
     Returns:
         bool: True if there are no duplicate versions, False otherwise.
     """
-    logger.info(f"Checking for duplicate schema versions for survey {survey_id}")
-
-    logger.debug(f"Fetching schema metadata for survey {survey_id}")
     schema_metadata = get_schema_metadata(survey_id)
 
+    # If the schema_metadata endpoint returns a 404, then the survey is new and there are no duplicate versions.
     if schema_metadata.status_code == 404:
         return True
 
@@ -165,9 +176,12 @@ def check_duplicate_versions(schema: dict, survey_id: str) -> bool:
 
     for version in schema_metadata.json():
         if new_schema_version == version["schema_version"]:
-            logger.error(
-                f"Schema version {new_schema_version} already exists for survey {survey_id}"
+            message = PubSubErrorMessage(
+                "SchemaVersionError",
+                f"Schema version {new_schema_version} already exists for survey {survey_id}",
+                "N/A",
             )
+            logger.error(message.error_message)
             exit(1)
     return True
 
@@ -182,21 +196,19 @@ def get_schema_metadata(survey_id: str) -> requests.Response:
     Returns:
         requests.Response: the response from the schema_metadata endpoint.
     """
-    session = setup_session()
-    headers = generate_headers()
-    try:
-        response = session.get(
-            f"{config.SDS_URL}{config.GET_SCHEMA_METADATA_ENDPOINT}{survey_id}",
-            headers=headers,
+    url = f"{config.SDS_URL}{config.GET_SCHEMA_METADATA_ENDPOINT}{survey_id}"
+    response = http_manager.make_get_request(url)
+    if response.status_code == 404:
+        logger.debug(
+            f"Schema metadata for survey {survey_id} not found, new survey added."
         )
-        response.raise_for_status()
-    except requests.exceptions.RequestException:
-        if response.status_code == 404:
-            logger.debug(
-                f"Schema metadata for survey {survey_id} not found, new survey added."
-            )
-            return response
-        else:
-            logger.error(f"Failed to fetch schema metadata for survey {survey_id}")
-            exit(1)
+        return response
+    elif response.status_code != 200:
+        message = PubSubErrorMessage(
+            "SchemaMetadataError",
+            f"Failed to fetch schema metadata for survey {survey_id}",
+            "N/A",
+        )
+        logger.error(message.error_message)
+        exit(1)
     return response
