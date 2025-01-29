@@ -77,11 +77,10 @@ class RequestService:
             message = PubSubErrorMessage(
                 "SchemaFetchError", "Failed to fetch schema from GitHub.", path
             )
-            logger.error(message.error_message)
-            exit(1)
+            raise Exception(message.error_message)
         schema = self.decode_json_response(response)
         return schema
-    
+
     def decode_json_response(self, response: requests.Response) -> dict:
         """
         Decode the JSON response from a requests.Response object.

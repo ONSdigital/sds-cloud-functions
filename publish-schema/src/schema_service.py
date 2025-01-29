@@ -1,5 +1,6 @@
 import logging
 
+from exception_message import ExceptionMessage
 from pub_sub_error_message import PubSubErrorMessage
 from request_service import REQUEST_SERVICE
 from utils import split_filename
@@ -8,6 +9,9 @@ logger = logging.getLogger(__name__)
 
 
 class SchemaService:
+    def __init__(self):
+        self.survey_id = None
+
     def fetch_survey_id(self, schema: dict) -> str:
         """
         Fetches the survey ID from the schema JSON.
@@ -50,8 +54,7 @@ class SchemaService:
                     f"Schema version for {filepath} does not match. Expected {filename}, got {schema['properties']['schema_version']['const']}",
                     filepath,
                 )
-                logger.error(message.error_message)
-                exit(1)
+                raise ExceptionMessage(message.error_message)
         except KeyError:
             message = PubSubErrorMessage(
                 "SchemaVersionError",
@@ -61,18 +64,17 @@ class SchemaService:
             logger.error(message.error_message)
             exit(1)
 
-    def check_duplicate_versions(self, schema: dict, survey_id: str) -> bool:
+    def check_duplicate_versions(self, schema: dict) -> bool:
         """
         Method to call the schema_metadata endpoint and check that the schema_version for the new schema is not already present in SDS.
 
         Parameters:
             schema (dict): the schema to be posted.
-            survey_id (str): the survey ID.
 
         Returns:
             bool: True if there are no duplicate versions, False otherwise.
         """
-        schema_metadata = REQUEST_SERVICE.get_schema_metadata(survey_id)
+        schema_metadata = REQUEST_SERVICE.get_schema_metadata(self.survey_id)
 
         # If the schema_metadata endpoint returns a 404, then the survey is new and there are no duplicate versions.
         if schema_metadata.status_code == 404:
@@ -84,12 +86,17 @@ class SchemaService:
             if new_schema_version == version["schema_version"]:
                 message = PubSubErrorMessage(
                     "SchemaVersionError",
-                    f"Schema version {new_schema_version} already exists for survey {survey_id}",
+                    f"Schema version {new_schema_version} already exists for survey {self.survey_id}",
                     "N/A",
                 )
-                logger.error(message.error_message)
-                exit(1)
+                raise ExceptionMessage(message.error_message)
         return True
+
+    def get_survey_id(self):
+        return self.survey_id
+
+    def set_survey_id(self, schema: dict):
+        self.survey_id = self.fetch_survey_id(schema)
 
 
 SCHEMA_SERVICE = SchemaService()

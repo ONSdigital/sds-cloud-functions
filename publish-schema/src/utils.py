@@ -1,8 +1,10 @@
 import logging
-from pub_sub_error_message import PubSubErrorMessage
 from pathlib import Path
 
+from pub_sub_error_message import PubSubErrorMessage
+
 logger = logging.getLogger(__name__)
+
 
 def split_filename(path: str) -> str:
     """
