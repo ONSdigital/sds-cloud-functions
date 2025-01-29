@@ -3,7 +3,6 @@ import logging
 
 import functions_framework
 from cloudevents.http import CloudEvent
-from exception_message import ExceptionMessage
 from request_service import REQUEST_SERVICE
 from schema_service import SCHEMA_SERVICE
 
@@ -22,15 +21,14 @@ def publish_schema(cloud_event: CloudEvent) -> None:
 
     try:
         schema = REQUEST_SERVICE.fetch_raw_schema(filepath)
+
         SCHEMA_SERVICE.set_survey_id(schema)
 
-        if SCHEMA_SERVICE.verify_version(filepath, schema):
-            logger.info(f"Schema version for {filepath} verified.")
+        SCHEMA_SERVICE.verify_version(filepath, schema)
 
-        if SCHEMA_SERVICE.check_duplicate_versions(schema):
-            logger.info(f"Schema version for {filepath} is not a duplicate.")
-    except ExceptionMessage as e:
+        SCHEMA_SERVICE.check_duplicate_versions(schema)
+
+        REQUEST_SERVICE.post_schema(schema, SCHEMA_SERVICE.get_survey_id(), filepath)
+    except RuntimeError as e:
         logger.error(e)
         exit(1)
-
-    REQUEST_SERVICE.post_schema(schema, SCHEMA_SERVICE.get_survey_id(), filepath)

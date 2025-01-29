@@ -1,6 +1,5 @@
 import logging
 
-from exception_message import ExceptionMessage
 from pub_sub_error_message import PubSubErrorMessage
 from request_service import REQUEST_SERVICE
 from utils import split_filename
@@ -54,7 +53,7 @@ class SchemaService:
                     f"Schema version for {filepath} does not match. Expected {filename}, got {schema['properties']['schema_version']['const']}",
                     filepath,
                 )
-                raise ExceptionMessage(message.error_message)
+                raise RuntimeError(message.error_message)
         except KeyError:
             message = PubSubErrorMessage(
                 "SchemaVersionError",
@@ -89,7 +88,7 @@ class SchemaService:
                     f"Schema version {new_schema_version} already exists for survey {self.survey_id}",
                     "N/A",
                 )
-                raise ExceptionMessage(message.error_message)
+                raise RuntimeError(message.error_message)
         return True
 
     def get_survey_id(self):

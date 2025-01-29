@@ -50,12 +50,12 @@ class RequestService:
         url = f"{CONFIG.SDS_URL}{CONFIG.POST_SCHEMA_ENDPOINT}{survey_id}"
         response = HTTP_MANAGER.make_post_request(url, schema)
         if response.status_code != 200:
-            PubSubErrorMessage(
+            message = PubSubErrorMessage(
                 "SchemaPostError",
                 f"Failed to post schema for survey {survey_id}",
                 filepath,
             )
-            logger.error(f"Failed to post schema for survey {survey_id}")
+            raise RuntimeError(message.error_message)
         else:
             logger.info(f"Schema: {filepath} posted for survey {survey_id}")
 
@@ -77,7 +77,7 @@ class RequestService:
             message = PubSubErrorMessage(
                 "SchemaFetchError", "Failed to fetch schema from GitHub.", path
             )
-            raise Exception(message.error_message)
+            raise RuntimeError(message.error_message)
         schema = self.decode_json_response(response)
         return schema
 
