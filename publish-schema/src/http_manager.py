@@ -2,7 +2,7 @@ import json
 
 import google.oauth2.id_token
 import requests
-from config import config
+from config import CONFIG
 from google.cloud import secretmanager
 from logging_config import logging
 from pub_sub_error_message import PubSubErrorMessage
@@ -103,7 +103,7 @@ class HTTPManager:
         """
         try:
             client = secretmanager.SecretManagerServiceClient()
-            name = f"projects/{config.PROJECT_ID}/secrets/{config.SECRET_ID}/versions/latest"
+            name = f"projects/{CONFIG.PROJECT_ID}/secrets/{CONFIG.SECRET_ID}/versions/latest"
             response = client.access_secret_version(name=name)
             secret_data = response.payload.data.decode("UTF-8")
             secret_json = json.loads(secret_data)
@@ -118,4 +118,4 @@ class HTTPManager:
             logging.error(message.error_message)
 
 
-http_manager = HTTPManager()
+HTTP_MANAGER = HTTPManager()

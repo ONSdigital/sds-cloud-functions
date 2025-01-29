@@ -21,4 +21,4 @@ class Config:
     )
 
 
-config = Config()
+CONFIG = Config()
