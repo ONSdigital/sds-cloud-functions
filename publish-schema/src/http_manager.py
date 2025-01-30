@@ -91,7 +91,7 @@ class HTTPManager:
         response.raise_for_status()
         return response
 
-    def access_secret_version() -> str:
+    def access_secret_version(self) -> str:
         """
         Access the secret version from Google Cloud Secret Manager.
 
