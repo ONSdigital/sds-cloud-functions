@@ -1,7 +1,8 @@
 import logging
 from pathlib import Path
 
-from pubsub.pub_sub_error_message import PubSubErrorMessage
+from pubsub.pub_sub_message import PubSubMessage
+from config.config import CONFIG
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ def split_filename(path: str) -> str:
     try:
         return Path(path).stem
     except Exception:
-        message = PubSubErrorMessage(
-            "Exception", "Failed to split filename from path.", path
+        message = PubSubMessage(
+            "Exception", "Failed to split filename from path.", path, CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID
         )
-        logger.error(message.error_message)
+        logger.error(message.message)

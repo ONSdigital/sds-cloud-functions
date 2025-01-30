@@ -1,8 +1,9 @@
 import logging
 
-from pubsub.pub_sub_error_message import PubSubErrorMessage
+from pubsub.pub_sub_message import PubSubMessage
 from request_service import REQUEST_SERVICE
 from schema.schema import Schema
+from config.config import CONFIG
 from utilities.utils import split_filename
 
 logger = logging.getLogger(__name__)
@@ -22,12 +23,12 @@ class SchemaService:
         try:
             survey_id = schema.get_json()["properties"]["survey_id"]["enum"][0]
         except (KeyError, IndexError) as e:
-            message = PubSubErrorMessage(
-                "SurveyIdError", "Failed to fetch survey_id from schema JSON.", "N/A"
+            message = PubSubMessage(
+                "SurveyIdError", "Failed to fetch survey_id from schema JSON.", "N/A", CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID
             )
-            raise RuntimeError(message.error_message) from e
+            raise RuntimeError(message.message) from e
         return survey_id
-    
+
     def validate_schema(self, schema: Schema):
         """
         Validate the schema by verifying the version and checking for duplicate versions.
@@ -52,19 +53,21 @@ class SchemaService:
         try:
             schema_version = schema.get_json()["properties"]["schema_version"]["const"]
             if schema_version != trimmed_filename:
-                message = PubSubErrorMessage(
+                message = PubSubMessage(
                     "SchemaVersionError",
                     f"Schema version for {filepath} does not match. Expected {trimmed_filename}, got {schema_version}",
                     filepath,
+                    CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
                 )
-                raise RuntimeError(message.error_message)
+                raise RuntimeError(message.message)
         except KeyError as e:
-            message = PubSubErrorMessage(
+            message = PubSubMessage(
                 "KeyError",
                 f"Schema version not found in {filepath}.",
                 filepath,
+                CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
-            raise RuntimeError(message.error_message) from e
+            raise RuntimeError(message.message) from e
 
     def _check_duplicate_versions(self, schema: Schema):
         """
@@ -85,12 +88,13 @@ class SchemaService:
 
         for version in schema_metadata.json():
             if new_schema_version == version["schema_version"]:
-                message = PubSubErrorMessage(
+                message = PubSubMessage(
                     "SchemaVersionError",
                     f"Schema version {new_schema_version} already exists for survey {SCHEMA_SERVICE.get_survey_id()}",
                     "N/A",
+                    CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
                 )
-                raise RuntimeError(message.error_message)
+                raise RuntimeError(message.message)
 
 
 SCHEMA_SERVICE = SchemaService()

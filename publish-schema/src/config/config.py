@@ -19,6 +19,9 @@ class Config:
     PUBLISH_SCHEMA_ERROR_TOPIC_ID = get_value_from_env(
         "PUBLISH_SCHEMA_ERROR_TOPIC_ID", "publish-schema-error"
     )
+    PUBLISH_SCHEMA_SUCCESS_TOPIC_ID = get_value_from_env(
+        "PUBLISH_SCHEMA_SUCCESS_TOPIC_ID", "publish-schema-success"
+    )
 
 
 CONFIG = Config()

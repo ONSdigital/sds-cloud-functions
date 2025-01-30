@@ -5,7 +5,7 @@ import google.oauth2.id_token
 import requests
 from config.config import CONFIG
 from google.cloud import secretmanager
-from pubsub.pub_sub_error_message import PubSubErrorMessage
+from pubsub.pub_sub_message import PubSubMessage
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
@@ -110,12 +110,13 @@ class HTTPService:
             oauth_client_id = secret_json["web"]["client_id"]
             return oauth_client_id
         except Exception as e:
-            message = PubSubErrorMessage(
+            message = PubSubMessage(
                 "Exception",
                 "Failed to access secret version from Secret Manager.",
                 "N/A",
+                CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
-            raise RuntimeError(message.error_message) from e
+            raise RuntimeError(message.message) from e
 
 
 HTTP_SERVICE = HTTPService()

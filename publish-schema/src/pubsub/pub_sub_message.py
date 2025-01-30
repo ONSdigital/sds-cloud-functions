@@ -8,20 +8,23 @@ from google.cloud import pubsub_v1
 logger = logging.getLogger(__name__)
 
 
-class PubSubErrorMessage:
-    def __init__(self, error_type: str, error_message: str, schema_file: str) -> None:
-        self.error_type = error_type
-        self.error_message = error_message
+class PubSubMessage:
+    def __init__(
+        self, message_type: str, message: str, schema_file: str, topic: str
+    ) -> None:
+        self.message_type = message_type
+        self.message = message
         self.schema_file = schema_file
+        self.topic = topic
 
-        self.send_message(CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID)
+        self.send_message(self.topic)
 
     def to_json(self) -> str:
         """
-        Serialise the PubSubErrorMessage to JSON string.
+        Serialise the PubSubMessage to JSON string.
 
         Returns:
-            str: The JSON string representation of the PubSubErrorMessage.
+            str: The JSON string representation of the PubSubMessage.
         """
         return json.dumps(self.__dict__)
 
