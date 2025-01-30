@@ -2,7 +2,7 @@ import logging
 
 from pubsub.pub_sub_error_message import PubSubErrorMessage
 from request_service import REQUEST_SERVICE
-from schema import Schema
+from schema.schema import Schema
 from utilities.utils import split_filename
 
 logger = logging.getLogger(__name__)

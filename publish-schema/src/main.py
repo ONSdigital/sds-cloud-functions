@@ -3,7 +3,7 @@ import logging
 
 import functions_framework
 from cloudevents.http import CloudEvent
-from schema import Schema
+from schema.schema import Schema
 from services.request_service import REQUEST_SERVICE
 from services.schema_service import SCHEMA_SERVICE
 

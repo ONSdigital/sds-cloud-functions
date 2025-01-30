@@ -4,7 +4,7 @@ import logging
 import requests
 from config.config import CONFIG
 from pubsub.pub_sub_error_message import PubSubErrorMessage
-from schema import Schema
+from schema.schema import Schema
 from services.http_service import HTTP_SERVICE
 
 logger = logging.getLogger(__name__)
