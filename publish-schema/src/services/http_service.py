@@ -1,23 +1,23 @@
 import json
+import logging
 
 import google.oauth2.id_token
 import requests
-from config import CONFIG
+from config.config import CONFIG
 from google.cloud import secretmanager
-from logging_config import logging
-from pub_sub_error_message import PubSubErrorMessage
+from pubsub.pub_sub_error_message import PubSubErrorMessage
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
 logging = logging.getLogger(__name__)
 
 
-class HTTPManager:
+class HTTPService:
     def __init__(self):
-        self.session = self.setup_session()
-        self.headers = self.generate_headers()
+        self.session = self._setup_session()
+        self.headers = self._generate_headers()
 
-    def setup_session(self) -> requests.Session:
+    def _setup_session(self) -> requests.Session:
         """
         Setup a http/s session to facilitate testing.
 
@@ -35,7 +35,7 @@ class HTTPManager:
 
         return session
 
-    def generate_headers(self) -> dict[str, str]:
+    def _generate_headers(self) -> dict[str, str]:
         """
         Create headers for authentication through SDS load balancer.
 
@@ -46,7 +46,7 @@ class HTTPManager:
             dict[str, str]: the headers required for remote authentication.
         """
         headers = {}
-        oauth_client_id = self.access_secret_version()
+        oauth_client_id = self._access_secret_version()
         auth_req = google.auth.transport.requests.Request()
         auth_token = google.oauth2.id_token.fetch_id_token(
             auth_req, audience=oauth_client_id
@@ -91,7 +91,7 @@ class HTTPManager:
         response.raise_for_status()
         return response
 
-    def access_secret_version(self) -> str:
+    def _access_secret_version(self) -> str:
         """
         Access the secret version from Google Cloud Secret Manager.
 
@@ -109,13 +109,13 @@ class HTTPManager:
             secret_json = json.loads(secret_data)
             oauth_client_id = secret_json["web"]["client_id"]
             return oauth_client_id
-        except Exception:
+        except Exception as e:
             message = PubSubErrorMessage(
                 "Exception",
                 "Failed to access secret version from Secret Manager.",
                 "N/A",
             )
-            logging.error(message.error_message)
+            raise RuntimeError(message.error_message) from e
 
 
-HTTP_MANAGER = HTTPManager()
+HTTP_SERVICE = HTTPService()

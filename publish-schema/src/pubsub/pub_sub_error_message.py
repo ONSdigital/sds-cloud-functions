@@ -2,7 +2,7 @@ import base64
 import json
 import logging
 
-from config import CONFIG
+from config.config import CONFIG
 from google.cloud import pubsub_v1
 
 logger = logging.getLogger(__name__)

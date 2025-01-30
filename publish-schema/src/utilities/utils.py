@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-from pub_sub_error_message import PubSubErrorMessage
+from pubsub.pub_sub_error_message import PubSubErrorMessage
 
 logger = logging.getLogger(__name__)
 

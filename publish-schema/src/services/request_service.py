@@ -2,9 +2,10 @@ import json
 import logging
 
 import requests
-from config import CONFIG
-from http_manager import HTTP_MANAGER
-from pub_sub_error_message import PubSubErrorMessage
+from config.config import CONFIG
+from pubsub.pub_sub_error_message import PubSubErrorMessage
+from schema import Schema
+from services.http_service import HTTP_SERVICE
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +22,7 @@ class RequestService:
             requests.Response: the response from the schema_metadata endpoint.
         """
         url = f"{CONFIG.SDS_URL}{CONFIG.GET_SCHEMA_METADATA_ENDPOINT}{survey_id}"
-        response = HTTP_MANAGER.make_get_request(url)
+        response = HTTP_SERVICE.make_get_request(url)
         if response.status_code == 404:
             logger.debug(
                 f"Schema metadata for survey {survey_id} not found, new survey added."
@@ -33,11 +34,10 @@ class RequestService:
                 f"Failed to fetch schema metadata for survey {survey_id}",
                 "N/A",
             )
-            logger.error(message.error_message)
-            exit(1)
+            raise RuntimeError(message.error_message)
         return response
 
-    def post_schema(self, schema: dict, survey_id: str, filepath: str) -> None:
+    def post_schema(self, schema: Schema) -> None:
         """
         Posts the schema to SDS.
 
@@ -46,9 +46,12 @@ class RequestService:
             survey_id (str): the survey ID.
             filepath (str): the path to the schema JSON.
         """
+        survey_id = schema.get_survey_id()
+        filepath = schema.get_filepath()
+
         logger.info(f"Posting schema for survey {survey_id}")
         url = f"{CONFIG.SDS_URL}{CONFIG.POST_SCHEMA_ENDPOINT}{survey_id}"
-        response = HTTP_MANAGER.make_post_request(url, schema)
+        response = HTTP_SERVICE.make_post_request(url, schema)
         if response.status_code != 200:
             message = PubSubErrorMessage(
                 "SchemaPostError",
@@ -71,17 +74,17 @@ class RequestService:
         """
         url = CONFIG.GITHUB_SCHEMA_URL + path
         logger.info(f"Fetching schema from {url}")
-        response = HTTP_MANAGER.make_get_request(url)
+        response = HTTP_SERVICE.make_get_request(url)
 
         if response.status_code != 200:
             message = PubSubErrorMessage(
                 "SchemaFetchError", "Failed to fetch schema from GitHub.", path
             )
             raise RuntimeError(message.error_message)
-        schema = self.decode_json_response(response)
+        schema = self._decode_json_response(response)
         return schema
 
-    def decode_json_response(self, response: requests.Response) -> dict:
+    def _decode_json_response(self, response: requests.Response) -> dict:
         """
         Decode the JSON response from a requests.Response object.
 
@@ -93,14 +96,13 @@ class RequestService:
         """
         try:
             decoded_response = response.json()
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as e:
             message = PubSubErrorMessage(
                 "JSONDecodeError",
                 "Failed to decode JSON response.",
                 "N/A",
             )
-            logger.error(message.error_message)
-            exit(1)
+            raise RuntimeError(message.error_message) from e
         return decoded_response
 
 
