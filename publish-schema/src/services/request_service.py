@@ -62,7 +62,7 @@ class RequestService:
                 "SchemaPostSuccess",
                 f"Schema {filepath} posted for survey {survey_id}",
                 filepath,
-                CONFIG.PUBLISH_SCHEMA_SUCCESS_TOPIC_ID
+                CONFIG.PUBLISH_SCHEMA_SUCCESS_TOPIC_ID,
             )
             logger.info(message.message)
 
@@ -82,7 +82,10 @@ class RequestService:
 
         if response.status_code != 200:
             message = PubSubMessage(
-                "SchemaFetchError", "Failed to fetch schema from GitHub.", path, CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID
+                "SchemaFetchError",
+                "Failed to fetch schema from GitHub.",
+                path,
+                CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
             raise RuntimeError(message.message)
         schema = self._decode_json_response(response)

@@ -1,9 +1,9 @@
 import logging
 
+from config.config import CONFIG
 from pubsub.pub_sub_message import PubSubMessage
 from request_service import REQUEST_SERVICE
 from schema.schema import Schema
-from config.config import CONFIG
 from utilities.utils import split_filename
 
 logger = logging.getLogger(__name__)
@@ -24,7 +24,10 @@ class SchemaService:
             survey_id = schema.get_json()["properties"]["survey_id"]["enum"][0]
         except (KeyError, IndexError) as e:
             message = PubSubMessage(
-                "SurveyIdError", "Failed to fetch survey_id from schema JSON.", "N/A", CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID
+                "SurveyIdError",
+                "Failed to fetch survey_id from schema JSON.",
+                "N/A",
+                CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
             raise RuntimeError(message.message) from e
         return survey_id
