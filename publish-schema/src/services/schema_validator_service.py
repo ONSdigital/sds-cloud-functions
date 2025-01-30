@@ -10,11 +10,6 @@ logger = logging.getLogger(__name__)
 
 
 class SchemaValidatorService:
-    def __init__(self, schema_json: dict, filepath: str) -> None:
-        self.json = schema_json
-        self.filepath = filepath
-        self.survey_id = self.fetch_survey_id(schema_json)
-
     def validate_schema(self, schema: Schema):
         """
         Validate the schema by verifying the version and checking for duplicate versions.
