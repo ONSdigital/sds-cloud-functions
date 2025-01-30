@@ -17,7 +17,7 @@ class HTTPManager:
         self.session = self.setup_session()
         self.headers = self.generate_headers()
 
-    def setup_session() -> requests.Session:
+    def setup_session(self) -> requests.Session:
         """
         Setup a http/s session to facilitate testing.
 
