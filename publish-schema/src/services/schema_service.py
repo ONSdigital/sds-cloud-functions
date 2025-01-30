@@ -3,34 +3,17 @@ import logging
 from config.config import CONFIG
 from pubsub.pub_sub_message import PubSubMessage
 from services.request_service import REQUEST_SERVICE
-from schema.schema import Schema
 from utilities.utils import split_filename
+from schema.schema import Schema
 
 logger = logging.getLogger(__name__)
 
 
-class SchemaService:
-    def fetch_survey_id(self, schema: Schema) -> str:
-        """
-        Fetches the survey ID from the schema JSON.
-
-        Parameters:
-            schema (dict): the schema JSON.
-
-        Returns:
-            str: the survey ID.
-        """
-        try:
-            survey_id = schema.get_json()["properties"]["survey_id"]["enum"][0]
-        except (KeyError, IndexError) as e:
-            message = PubSubMessage(
-                "SurveyIdError",
-                "Failed to fetch survey_id from schema JSON.",
-                "N/A",
-                CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
-            )
-            raise RuntimeError(message.message) from e
-        return survey_id
+class SchemaValidatorService:
+    def __init__(self, schema_json: dict, filepath: str) -> None:
+        self.json = schema_json
+        self.filepath = filepath
+        self.survey_id = self.fetch_survey_id(schema_json)
 
     def validate_schema(self, schema: Schema):
         """
@@ -80,7 +63,7 @@ class SchemaService:
             schema (Schema): the schema to be posted.
         """
         schema_metadata = REQUEST_SERVICE.get_schema_metadata(
-            SCHEMA_SERVICE.get_survey_id()
+            self.get_survey_id()
         )
 
         # If the schema_metadata endpoint returns a 404, then the survey is new and there are no duplicate versions.
@@ -93,11 +76,10 @@ class SchemaService:
             if new_schema_version == version["schema_version"]:
                 message = PubSubMessage(
                     "SchemaVersionError",
-                    f"Schema version {new_schema_version} already exists for survey {SCHEMA_SERVICE.get_survey_id()}",
+                    f"Schema version {new_schema_version} already exists for survey {self.get_survey_id()}",
                     "N/A",
                     CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
                 )
                 raise RuntimeError(message.message)
 
-
-SCHEMA_SERVICE = SchemaService()
+SCHEMA_SERVICE = SchemaValidatorService()
