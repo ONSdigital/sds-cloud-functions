@@ -77,4 +77,4 @@ class SchemaValidatorService:
                 )
                 raise RuntimeError(message.message)
 
-SCHEMA_SERVICE = SchemaValidatorService()
+SCHEMA_VALIDATOR_SERVICE = SchemaValidatorService()
