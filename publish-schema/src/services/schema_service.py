@@ -2,7 +2,7 @@ import logging
 
 from config.config import CONFIG
 from pubsub.pub_sub_message import PubSubMessage
-from request_service import REQUEST_SERVICE
+from services.request_service import REQUEST_SERVICE
 from schema.schema import Schema
 from utilities.utils import split_filename
 
