@@ -1,6 +1,6 @@
 import logging
 
-from pub_sub_publisher import PUB_SUB_PUBLISHER
+from pubsub.pub_sub_publisher import PUB_SUB_PUBLISHER
 
 logger = logging.getLogger(__name__)
 
