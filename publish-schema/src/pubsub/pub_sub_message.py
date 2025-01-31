@@ -14,4 +14,11 @@ class PubSubMessage:
         self.schema_file = schema_file
         self.topic = topic
 
-        PUB_SUB_PUBLISHER.send_message(self.topic)
+        PUB_SUB_PUBLISHER.send_message(self)
+
+    def json_message(self) -> dict:
+        return {
+            "message_type": self.message_type,
+            "message": self.message,
+            "schema_file": self.schema_file,
+        }
