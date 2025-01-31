@@ -6,6 +6,7 @@ import requests
 from config.config import CONFIG
 from google.cloud import secretmanager
 from pubsub.pub_sub_message import PubSubMessage
+from pubsub.pub_sub_publisher import PUB_SUB_PUBLISHER
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
 
@@ -108,6 +109,7 @@ class HTTPService:
                 "N/A",
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
+            PUB_SUB_PUBLISHER.send_message(message)
             raise RuntimeError(message.message) from e
 
 

@@ -1,4 +1,5 @@
 from pubsub.pub_sub_message import PubSubMessage
+from pubsub.pub_sub_publisher import PUB_SUB_PUBLISHER
 from config.config import CONFIG
 
 class Schema:
@@ -6,15 +7,6 @@ class Schema:
         self.json = schema_json
         self.filepath = filepath
         self.survey_id = self.set_survey_id(schema_json)
-
-    def get_json(self) -> dict:
-        return self.json
-
-    def get_filepath(self) -> str:
-        return self.filepath
-
-    def get_survey_id(self) -> str:
-        return self.survey_id
 
     def set_survey_id(self) -> str:
         """
@@ -27,7 +19,7 @@ class Schema:
             str: the survey ID.
         """
         try:
-            survey_id = self.get_json()["properties"]["survey_id"]["enum"][0]
+            survey_id = self.json["properties"]["survey_id"]["enum"][0]
         except (KeyError, IndexError) as e:
             message = PubSubMessage(
                 "SurveyIdError",
@@ -35,5 +27,6 @@ class Schema:
                 "N/A",
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
+            PUB_SUB_PUBLISHER.send_message(message)
             raise RuntimeError(message.message) from e
         return survey_id

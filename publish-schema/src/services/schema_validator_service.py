@@ -2,6 +2,7 @@ import logging
 
 from config.config import CONFIG
 from pubsub.pub_sub_message import PubSubMessage
+from pubsub.pub_sub_publisher import PUB_SUB_PUBLISHER
 from services.request_service import REQUEST_SERVICE
 from utilities.utils import split_filename
 from schema.schema import Schema
@@ -28,26 +29,27 @@ class SchemaValidatorService:
             filename (str): the filename of the schema.
             schema (Schema): the schema object to be posted.
         """
-        filepath = schema.get_filepath()
-        trimmed_filename = split_filename(filepath)
-        logger.info(f"Verifying schema version for {filepath}")
+        trimmed_filename = split_filename(schema.filepath)
+        logger.info(f"Verifying schema version for {schema.filepath}")
         try:
-            schema_version = schema.get_json()["properties"]["schema_version"]["const"]
+            schema_version = schema.json["properties"]["schema_version"]["const"]
             if schema_version != trimmed_filename:
                 message = PubSubMessage(
                     "SchemaVersionError",
-                    f"Schema version for {filepath} does not match. Expected {trimmed_filename}, got {schema_version}",
-                    filepath,
+                    f"Schema version for {schema.filepath} does not match. Expected {trimmed_filename}, got {schema_version}",
+                    schema.filepath,
                     CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
                 )
+                PUB_SUB_PUBLISHER.send_message(message)
                 raise RuntimeError(message.message)
         except KeyError as e:
             message = PubSubMessage(
                 "KeyError",
-                f"Schema version not found in {filepath}.",
-                filepath,
+                f"Schema version not found in {schema.filepath}.",
+                schema.filepath,
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
+            PUB_SUB_PUBLISHER.send_message(message)
             raise RuntimeError(message.message) from e
 
     def _check_duplicate_versions(self, schema: Schema):
@@ -58,23 +60,24 @@ class SchemaValidatorService:
             schema (Schema): the schema to be posted.
         """
         schema_metadata = REQUEST_SERVICE.get_schema_metadata(
-            schema.get_survey_id()
+            schema.survey_id
         )
 
         # If the schema_metadata endpoint returns a 404, then the survey is new and there are no duplicate versions.
         if schema_metadata.status_code == 404:
             return
 
-        new_schema_version = schema.get_json()["properties"]["schema_version"]["const"]
+        new_schema_version = schema.json["properties"]["schema_version"]["const"]
 
         for version in schema_metadata.json():
             if new_schema_version == version["schema_version"]:
                 message = PubSubMessage(
                     "SchemaVersionError",
-                    f"Schema version {new_schema_version} already exists for survey {schema.get_survey_id()}",
+                    f"Schema version {new_schema_version} already exists for survey {schema.survey_id}",
                     "N/A",
                     CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
                 )
+                PUB_SUB_PUBLISHER.send_message(message)
                 raise RuntimeError(message.message)
 
 SCHEMA_VALIDATOR_SERVICE = SchemaValidatorService()

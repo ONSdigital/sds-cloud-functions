@@ -29,7 +29,7 @@ class PubSubPublisher:
             dict: The message sent to the Pub/Sub topic.
         """
         topic_path = self.publisher.topic_path(CONFIG.PROJECT_ID, message.topic)
-        self.publisher.publish(topic_path, data=message.json_message().encode("utf-8"))
+        self.publisher.publish(topic_path, data=message.generate_message().encode("utf-8"))
 
 
 PUB_SUB_PUBLISHER = PubSubPublisher()

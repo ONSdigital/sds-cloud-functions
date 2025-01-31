@@ -4,6 +4,7 @@ import logging
 import requests
 from config.config import CONFIG
 from pubsub.pub_sub_message import PubSubMessage
+from pubsub.pub_sub_publisher import PUB_SUB_PUBLISHER
 from schema.schema import Schema
 from services.http_service import HTTP_SERVICE
 
@@ -31,6 +32,7 @@ class RequestService:
                 "N/A",
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
+            PUB_SUB_PUBLISHER.send_message(message)
             raise RuntimeError(message.message)
         return response
 
@@ -41,27 +43,26 @@ class RequestService:
         Parameters:
             schema (Schema): the schema to be posted.
         """
-        survey_id = schema.get_survey_id()
-        filepath = schema.get_filepath()
-
-        logger.info(f"Posting schema for survey {survey_id}")
-        url = f"{CONFIG.SDS_URL}{CONFIG.POST_SCHEMA_ENDPOINT}{survey_id}"
+        logger.info(f"Posting schema for survey {schema.survey_id}")
+        url = f"{CONFIG.SDS_URL}{CONFIG.POST_SCHEMA_ENDPOINT}{schema.survey_id}"
         response = HTTP_SERVICE.make_post_request(url, schema)
         if response.status_code != 200:
             message = PubSubMessage(
                 "SchemaPostError",
-                f"Failed to post schema for survey {survey_id}",
-                filepath,
+                f"Failed to post schema for survey {schema.survey_id}",
+                schema.filepath,
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
+            PUB_SUB_PUBLISHER.send_message(message)
             raise RuntimeError(message.message)
         else:
             message = PubSubMessage(
                 "SchemaPostSuccess",
-                f"Schema {filepath} posted for survey {survey_id}",
-                filepath,
+                f"Schema {schema.filepath} posted for survey {schema.survey_id}",
+                schema.filepath,
                 CONFIG.PUBLISH_SCHEMA_SUCCESS_TOPIC_ID,
             )
+            PUB_SUB_PUBLISHER.send_message(message)
             logger.info(message.message)
 
     def fetch_raw_schema(self, path: str) -> dict:
@@ -85,6 +86,7 @@ class RequestService:
                 path,
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
+            PUB_SUB_PUBLISHER.send_message(message)
             raise RuntimeError(message.message)
         schema = self._decode_json_response(response)
         return schema
@@ -108,6 +110,7 @@ class RequestService:
                 "N/A",
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
+            PUB_SUB_PUBLISHER.send_message(message)
             raise RuntimeError(message.message) from e
         return decoded_response
 
