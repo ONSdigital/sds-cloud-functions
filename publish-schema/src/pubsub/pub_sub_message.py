@@ -1,3 +1,4 @@
+import json
 import logging
 
 logger = logging.getLogger(__name__)
@@ -12,9 +13,16 @@ class PubSubMessage:
         self.schema_file = schema_file
         self.topic = topic
 
-    def generate_message(self) -> dict:
-        return {
-            "message_type": self.message_type,
-            "message": self.message,
-            "schema_file": self.schema_file,
-        }
+    def generate_message(self) -> str:
+        """Generate a JSON string representation of the PubSubMessage to be sent.
+
+        Returns:
+            str: JSON string representation of the PubSubMessage without topic.
+        """
+        return json.dumps(
+            {
+                "message_type": self.message_type,
+                "message": self.message,
+                "schema_file": self.schema_file,
+            }
+        )

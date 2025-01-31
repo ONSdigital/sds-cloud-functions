@@ -1,6 +1,7 @@
+from config.config import CONFIG
 from pubsub.pub_sub_message import PubSubMessage
 from pubsub.pub_sub_publisher import PUB_SUB_PUBLISHER
-from config.config import CONFIG
+
 
 class Schema:
     def __init__(self, schema_json: dict, filepath: str) -> None:

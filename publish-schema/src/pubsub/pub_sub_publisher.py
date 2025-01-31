@@ -24,12 +24,10 @@ class PubSubPublisher:
 
         Parameters:
             topic (str): The Pub/Sub topic to send the message to.
-
-        Returns:
-            dict: The message sent to the Pub/Sub topic.
         """
         topic_path = self.publisher.topic_path(CONFIG.PROJECT_ID, message.topic)
-        self.publisher.publish(topic_path, data=message.generate_message().encode("utf-8"))
+        message_json = message.generate_message()
+        self.publisher.publish(topic_path, data=message_json.encode("utf-8"))
 
 
 PUB_SUB_PUBLISHER = PubSubPublisher()

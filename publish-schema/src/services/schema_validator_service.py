@@ -3,9 +3,9 @@ import logging
 from config.config import CONFIG
 from pubsub.pub_sub_message import PubSubMessage
 from pubsub.pub_sub_publisher import PUB_SUB_PUBLISHER
+from schema.schema import Schema
 from services.request_service import REQUEST_SERVICE
 from utilities.utils import split_filename
-from schema.schema import Schema
 
 logger = logging.getLogger(__name__)
 
@@ -59,9 +59,7 @@ class SchemaValidatorService:
         Parameters:
             schema (Schema): the schema to be posted.
         """
-        schema_metadata = REQUEST_SERVICE.get_schema_metadata(
-            schema.survey_id
-        )
+        schema_metadata = REQUEST_SERVICE.get_schema_metadata(schema.survey_id)
 
         # If the schema_metadata endpoint returns a 404, then the survey is new and there are no duplicate versions.
         if schema_metadata.status_code == 404:
@@ -79,5 +77,6 @@ class SchemaValidatorService:
                 )
                 PUB_SUB_PUBLISHER.send_message(message)
                 raise RuntimeError(message.message)
+
 
 SCHEMA_VALIDATOR_SERVICE = SchemaValidatorService()
