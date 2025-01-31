@@ -16,7 +16,7 @@ logging = logging.getLogger(__name__)
 class HTTPService:
     def __init__(self):
         self.session = self._setup_session()
-        self.headers = self._generate_headers()
+        self.sds_headers = self._generate_headers()
 
     def _setup_session(self) -> requests.Session:
         """
@@ -74,7 +74,8 @@ class HTTPService:
         response = self.session.post(url, headers=self.headers, json=data)
         return response
 
-    def make_get_request(self, url: str) -> requests.Response:
+    # headers not needed for GET request to github but are needed for request to SDS
+    def make_get_request(self, url: str, sds_headers = True) -> requests.Response:
         """
         Make a GET request to a specified URL.
 
@@ -84,7 +85,7 @@ class HTTPService:
         Returns:
             requests.Response: the response from the GET request.
         """
-        response = self.session.get(url, headers=self.headers)
+        response = self.session.get(url, headers=self.sds_headers if sds_headers else None)
         return response
 
     def _access_secret_version(self) -> str:

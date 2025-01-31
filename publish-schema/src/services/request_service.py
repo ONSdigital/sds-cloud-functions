@@ -77,12 +77,12 @@ class RequestService:
         """
         url = CONFIG.GITHUB_SCHEMA_URL + path
         logger.info(f"Fetching schema from {url}")
-        response = HTTP_SERVICE.make_get_request(url)
+        response = HTTP_SERVICE.make_get_request(url, sds_headers=False)
 
         if response.status_code != 200:
             message = PubSubMessage(
                 "SchemaFetchError",
-                "Failed to fetch schema from GitHub.",
+                f"Failed to fetch schema from GitHub. Status code: {response.status_code}. URL: {url}",
                 path,
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )

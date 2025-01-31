@@ -7,7 +7,7 @@ class Schema:
     def __init__(self, schema_json: dict, filepath: str) -> None:
         self.json = schema_json
         self.filepath = filepath
-        self.survey_id = self.set_survey_id(schema_json)
+        self.survey_id = self.set_survey_id()
 
     def set_survey_id(self) -> str:
         """
