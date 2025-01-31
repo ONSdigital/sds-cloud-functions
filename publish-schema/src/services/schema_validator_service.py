@@ -58,20 +58,20 @@ class SchemaValidatorService:
             schema (Schema): the schema to be posted.
         """
         schema_metadata = REQUEST_SERVICE.get_schema_metadata(
-            self.get_survey_id()
+            schema.get_survey_id()
         )
 
         # If the schema_metadata endpoint returns a 404, then the survey is new and there are no duplicate versions.
         if schema_metadata.status_code == 404:
             return
 
-        new_schema_version = schema["properties"]["schema_version"]["const"]
+        new_schema_version = schema.get_json()["properties"]["schema_version"]["const"]
 
         for version in schema_metadata.json():
             if new_schema_version == version["schema_version"]:
                 message = PubSubMessage(
                     "SchemaVersionError",
-                    f"Schema version {new_schema_version} already exists for survey {self.get_survey_id()}",
+                    f"Schema version {new_schema_version} already exists for survey {schema.get_survey_id()}",
                     "N/A",
                     CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
                 )

@@ -12,7 +12,7 @@ def split_filename(path: str) -> str:
     Splits the filename without extension from the path.
 
     Parameters:
-        path (str): the path to the schema JSON.
+        path (str): the path to the file.
 
     Returns:
         str: the filename.

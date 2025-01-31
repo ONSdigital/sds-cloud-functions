@@ -19,7 +19,7 @@ class HTTPService:
 
     def _setup_session(self) -> requests.Session:
         """
-        Setup a http/s session to facilitate testing.
+        Setup a http/s session.
 
         Parameters:
             None
@@ -38,9 +38,6 @@ class HTTPService:
     def _generate_headers(self) -> dict[str, str]:
         """
         Create headers for authentication through SDS load balancer.
-
-        Parameters:
-            None
 
         Returns:
             dict[str, str]: the headers required for remote authentication.
@@ -74,7 +71,6 @@ class HTTPService:
         """
 
         response = self.session.post(url, headers=self.headers, json=data)
-        response.raise_for_status()
         return response
 
     def make_get_request(self, url: str) -> requests.Response:
@@ -88,7 +84,6 @@ class HTTPService:
             requests.Response: the response from the GET request.
         """
         response = self.session.get(url, headers=self.headers)
-        response.raise_for_status()
         return response
 
     def _access_secret_version(self) -> str:
@@ -97,9 +92,6 @@ class HTTPService:
 
         Returns:
             str: The OAuth client ID.
-
-        Raises:
-            RuntimeError: If there is an error accessing the secret or parsing the JSON data.
         """
         try:
             client = secretmanager.SecretManagerServiceClient()

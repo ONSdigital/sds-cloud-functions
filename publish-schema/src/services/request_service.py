@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class RequestService:
     def get_schema_metadata(self, survey_id: str) -> requests.Response:
         """
-        Method to call the schema_metadata endpoint and return the response for the survey.
+        Call the GET schema_metadata SDS endpoint and return the response for the survey.
 
         Parameters:
             survey_id (str): the survey_id of the schema.
@@ -23,7 +23,7 @@ class RequestService:
         """
         url = f"{CONFIG.SDS_URL}{CONFIG.GET_SCHEMA_METADATA_ENDPOINT}{survey_id}"
         response = HTTP_SERVICE.make_get_request(url)
-        # If the response status code is not 200 or 404 (new survey added), raise an error
+        # If the response status code is 404, a new survey is being onboarded.
         if response.status_code != 200 or response.status_code != 404:
             message = PubSubMessage(
                 "SchemaMetadataError",
@@ -36,12 +36,10 @@ class RequestService:
 
     def post_schema(self, schema: Schema) -> None:
         """
-        Posts the schema to SDS.
+        Post the schema to SDS.
 
         Parameters:
-            schema (dict): the schema to be posted.
-            survey_id (str): the survey ID.
-            filepath (str): the path to the schema JSON.
+            schema (Schema): the schema to be posted.
         """
         survey_id = schema.get_survey_id()
         filepath = schema.get_filepath()
