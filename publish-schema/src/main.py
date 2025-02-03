@@ -30,4 +30,3 @@ def publish_schema(cloud_event: CloudEvent) -> None:
         REQUEST_SERVICE.post_schema(schema)
     except RuntimeError as e:
         logger.error(e)
-        exit(1)

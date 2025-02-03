@@ -23,7 +23,7 @@ class RequestService:
             requests.Response: the response from the schema_metadata endpoint.
         """
         url = f"{CONFIG.SDS_URL}{CONFIG.GET_SCHEMA_METADATA_ENDPOINT}{survey_id}"
-        response = HTTP_SERVICE.make_get_request(url)
+        response = HTTP_SERVICE.make_get_request(url, sds_headers=True)
         # If the response status code is 404, a new survey is being onboarded.
         if response.status_code != 200 or response.status_code != 404:
             message = PubSubMessage(
@@ -62,6 +62,7 @@ class RequestService:
                 schema.filepath,
                 CONFIG.PUBLISH_SCHEMA_SUCCESS_TOPIC_ID,
             )
+            # redundant due to SDS posting success itself to this topic ?
             PUB_SUB_PUBLISHER.send_message(message)
             logger.info(message.message)
 
@@ -77,7 +78,7 @@ class RequestService:
         """
         url = CONFIG.GITHUB_SCHEMA_URL + path
         logger.info(f"Fetching schema from {url}")
-        response = HTTP_SERVICE.make_get_request(url, sds_headers=False)
+        response = HTTP_SERVICE.make_get_request(url)
 
         if response.status_code != 200:
             message = PubSubMessage(

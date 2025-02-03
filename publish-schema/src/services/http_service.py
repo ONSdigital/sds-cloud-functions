@@ -71,21 +71,23 @@ class HTTPService:
             requests.Response: the response from the POST request.
         """
 
-        response = self.session.post(url, headers=self.headers, json=data)
+        response = self.session.post(url, headers=self.sds_headers, json=data)
         return response
 
-    # headers not needed for GET request to github but are needed for request to SDS
-    def make_get_request(self, url: str, sds_headers = True) -> requests.Response:
+    def make_get_request(self, url: str, sds_headers=None) -> requests.Response:
         """
         Make a GET request to a specified URL.
 
         Parameters:
             url (str): the URL to send the GET request to.
+            sds_headers (bool): whether to include the SDS headers in the request (for SDS API).
 
         Returns:
             requests.Response: the response from the GET request.
         """
-        response = self.session.get(url, headers=self.sds_headers if sds_headers else None)
+        response = self.session.get(
+            url, headers=self.sds_headers if sds_headers else None
+        )
         return response
 
     def _access_secret_version(self) -> str:
