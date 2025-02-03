@@ -56,13 +56,13 @@ class HTTPService:
 
         return headers
 
-    def make_post_request(self, url: str, data: dict[str][str]) -> requests.Response:
+    def make_post_request(self, url: str, data: dict) -> requests.Response:
         """
         Make a POST request to a specified URL.
 
         Parameters:
             url (str): the URL to send the POST request to.
-            data (dict): the data to send in the POST request.
+            data (dict): the JSON data to send in the POST request.
 
         Returns:
             requests.Response: the response from the POST request.
