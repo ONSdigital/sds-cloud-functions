@@ -1,9 +1,10 @@
 import json
-from google.cloud import secretmanager
+
 from config.config import CONFIG
+from google.api_core.exceptions import GoogleAPICallError, RetryError
+from google.cloud import secretmanager
 from pubsub.pub_sub_message import PubSubMessage
 from pubsub.pub_sub_publisher import PUB_SUB_PUBLISHER
-from google.api_core.exceptions import GoogleAPICallError, RetryError
 
 
 class SecretService:
@@ -41,7 +42,9 @@ class SecretService:
             str: The Secret value.
         """
         try:
-            name = f"projects/{self.project_id}/secrets/{self.secret_id}/versions/latest"
+            name = (
+                f"projects/{self.project_id}/secrets/{self.secret_id}/versions/latest"
+            )
             response = self.client.access_secret_version(name=name)
             return response.payload.data.decode("UTF-8")
         except (GoogleAPICallError, RetryError):

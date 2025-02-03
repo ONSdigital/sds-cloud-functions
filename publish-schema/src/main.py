@@ -3,11 +3,14 @@ import logging
 
 import functions_framework
 from cloudevents.http import CloudEvent
+import google.cloud.logging
 from schema.schema import Schema
 from services.request_service import REQUEST_SERVICE
 from services.schema_validator_service import SCHEMA_VALIDATOR_SERVICE
 
 logger = logging.getLogger(__name__)
+client = google.cloud.logging.Client()
+client.setup_logging()
 
 
 @functions_framework.cloud_event

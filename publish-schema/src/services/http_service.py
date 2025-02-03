@@ -2,8 +2,8 @@ import logging
 
 import google.oauth2.id_token
 import requests
-from services.secret_service import SECRET_SERVICE
 from requests.adapters import HTTPAdapter
+from services.secret_service import SECRET_SERVICE
 from urllib3 import Retry
 
 logging = logging.getLogger(__name__)

@@ -1,7 +1,6 @@
 import logging
 
 from config.config import CONFIG
-
 from pubsub.pub_sub_message import PubSubMessage
 from pubsub.pub_sub_publisher import PUB_SUB_PUBLISHER
 from schema.schema import Schema
@@ -35,10 +34,13 @@ class SchemaValidatorService:
         try:
             schema_version = schema.json["properties"]["schema_version"]["const"]
             if schema_version != trimmed_filename:
-                message = PubSubMessage("SchemaVersionError",
-                                        f"Schema version for {schema.filepath} does not match. Expected "
-                                        f"{trimmed_filename} got {schema_version}",
-                                        schema.filepath, CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID, )
+                message = PubSubMessage(
+                    "SchemaVersionError",
+                    f"Schema version for {schema.filepath} does not match. Expected "
+                    f"{trimmed_filename} got {schema_version}",
+                    schema.filepath,
+                    CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
+                )
                 PUB_SUB_PUBLISHER.send_message(message)
                 raise RuntimeError(message.message)
         except KeyError:
@@ -72,8 +74,10 @@ class SchemaValidatorService:
             if new_schema_version == version["schema_version"]:
                 message = PubSubMessage(
                     "SchemaVersionError",
-                    f"Schema version {new_schema_version} already exists for survey {schema.survey_id}", "N/A",
-                    CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID)
+                    f"Schema version {new_schema_version} already exists for survey {schema.survey_id}",
+                    "N/A",
+                    CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
+                )
                 PUB_SUB_PUBLISHER.send_message(message)
                 raise RuntimeError(message.message)
 
