@@ -20,7 +20,7 @@ def split_filename(path: str) -> str:
     """
     try:
         return Path(path).stem
-    except Exception:
+    except TypeError:
         message = PubSubMessage(
             "Exception",
             "Failed to split filename from path.",

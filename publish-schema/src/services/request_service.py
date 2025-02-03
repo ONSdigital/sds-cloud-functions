@@ -12,7 +12,8 @@ logger = logging.getLogger(__name__)
 
 
 class RequestService:
-    def get_schema_metadata(self, survey_id: str) -> requests.Response:
+    @staticmethod
+    def get_schema_metadata(survey_id: str) -> requests.Response:
         """
         Call the GET schema_metadata SDS endpoint and return the response for the survey.
 
@@ -36,7 +37,8 @@ class RequestService:
             raise RuntimeError(message.message)
         return response
 
-    def post_schema(self, schema: Schema) -> None:
+    @staticmethod
+    def post_schema(schema: Schema) -> None:
         """
         Post the schema to SDS.
 
@@ -92,7 +94,8 @@ class RequestService:
         schema = self._decode_json_response(response)
         return schema
 
-    def _decode_json_response(self, response: requests.Response) -> dict:
+    @staticmethod
+    def _decode_json_response(response: requests.Response) -> dict:
         """
         Decode the JSON response from a requests.Response object.
 

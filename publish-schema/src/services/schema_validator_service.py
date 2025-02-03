@@ -1,6 +1,7 @@
 import logging
 
 from config.config import CONFIG
+
 from pubsub.pub_sub_message import PubSubMessage
 from pubsub.pub_sub_publisher import PUB_SUB_PUBLISHER
 from schema.schema import Schema
@@ -16,17 +17,17 @@ class SchemaValidatorService:
         Validate the schema by verifying the version and checking for duplicate versions.
 
         Args:
-            schema (Schema): _description_
+            schema (Schema): The schema object to validate.
         """
         self._verify_version(schema)
         self._check_duplicate_versions(schema)
 
-    def _verify_version(self, schema: Schema):
+    @staticmethod
+    def _verify_version(schema: Schema):
         """
         Method to verify the schema version in the JSON matches the filename.
 
         Parameters:
-            filename (str): the filename of the schema.
             schema (Schema): the schema object to be posted.
         """
         trimmed_filename = split_filename(schema.filepath)
@@ -34,12 +35,10 @@ class SchemaValidatorService:
         try:
             schema_version = schema.json["properties"]["schema_version"]["const"]
             if schema_version != trimmed_filename:
-                message = PubSubMessage(
-                    "SchemaVersionError",
-                    f"Schema version for {schema.filepath} does not match. Expected {trimmed_filename}, got {schema_version}",
-                    schema.filepath,
-                    CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
-                )
+                message = PubSubMessage("SchemaVersionError",
+                                        f"Schema version for {schema.filepath} does not match. Expected "
+                                        f"{trimmed_filename} got {schema_version}",
+                                        schema.filepath, CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID, )
                 PUB_SUB_PUBLISHER.send_message(message)
                 raise RuntimeError(message.message)
         except KeyError as e:
@@ -52,9 +51,11 @@ class SchemaValidatorService:
             PUB_SUB_PUBLISHER.send_message(message)
             raise RuntimeError(message.message) from e
 
-    def _check_duplicate_versions(self, schema: Schema):
+    @staticmethod
+    def _check_duplicate_versions(schema: Schema):
         """
-        Method to call the schema_metadata endpoint and check that the schema_version for the new schema is not already present in SDS.
+        Method to call the schema_metadata endpoint and check that the schema_version for the new schema is not
+        already present in SDS.
 
         Parameters:
             schema (Schema): the schema to be posted.
@@ -71,10 +72,8 @@ class SchemaValidatorService:
             if new_schema_version == version["schema_version"]:
                 message = PubSubMessage(
                     "SchemaVersionError",
-                    f"Schema version {new_schema_version} already exists for survey {schema.survey_id}",
-                    "N/A",
-                    CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
-                )
+                    f"Schema version {new_schema_version} already exists for survey {schema.survey_id}", "N/A",
+                    CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID)
                 PUB_SUB_PUBLISHER.send_message(message)
                 raise RuntimeError(message.message)
 

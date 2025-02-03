@@ -18,12 +18,12 @@ class PubSubPublisher:
         """
         return json.dumps(self.__dict__)
 
-    def send_message(self, message: PubSubMessage) -> dict:
+    def send_message(self, message: PubSubMessage):
         """
         Sends a Pub/Sub message to a specified topic.
 
         Parameters:
-            topic (str): The Pub/Sub topic to send the message to.
+            message (PubSubMessage): The PubSubMessage object to send.
         """
         topic_path = self.publisher.topic_path(CONFIG.PROJECT_ID, message.topic)
         message_json = message.generate_message()

@@ -13,9 +13,6 @@ class Schema:
         """
         Fetches the survey ID from the schema JSON.
 
-        Parameters:
-            schema (dict): the schema JSON.
-
         Returns:
             str: the survey ID.
         """

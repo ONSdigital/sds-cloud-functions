@@ -18,12 +18,10 @@ class HTTPService:
         self.session = self._setup_session()
         self.sds_headers = self._generate_headers()
 
-    def _setup_session(self) -> requests.Session:
+    @staticmethod
+    def _setup_session() -> requests.Session:
         """
-        Setup a http/s session.
-
-        Parameters:
-            None
+        Set up a http/s session.
 
         Returns:
             Session: a http/s session.
@@ -43,7 +41,6 @@ class HTTPService:
         Returns:
             dict[str, str]: the headers required for remote authentication.
         """
-        headers = {}
         oauth_client_id = self._access_secret_version()
         auth_req = google.auth.transport.requests.Request()
         auth_token = google.oauth2.id_token.fetch_id_token(
@@ -59,7 +56,7 @@ class HTTPService:
 
         return headers
 
-    def make_post_request(self, url: str, data: dict) -> requests.Response:
+    def make_post_request(self, url: str, data: dict[str][str]) -> requests.Response:
         """
         Make a POST request to a specified URL.
 
@@ -90,7 +87,8 @@ class HTTPService:
         )
         return response
 
-    def _access_secret_version(self) -> str:
+    @staticmethod
+    def _access_secret_version() -> str:
         """
         Access the secret version from Google Cloud Secret Manager.
 
