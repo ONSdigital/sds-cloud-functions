@@ -28,4 +28,4 @@ def split_filename(path: str) -> str:
             CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
         )
         PUB_SUB_PUBLISHER.send_message(message)
-        logger.error(message.message)
+        raise RuntimeError(message.message) from None

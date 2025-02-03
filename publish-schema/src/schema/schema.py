@@ -18,13 +18,13 @@ class Schema:
         """
         try:
             survey_id = self.json["properties"]["survey_id"]["enum"][0]
-        except (KeyError, IndexError) as e:
+        except (KeyError, IndexError):
             message = PubSubMessage(
                 "SurveyIdError",
-                "Failed to fetch survey_id from schema JSON.",
+                "Failed to fetch survey_id from schema JSON. Check the schema JSON for the correct format.",
                 "N/A",
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
             PUB_SUB_PUBLISHER.send_message(message)
-            raise RuntimeError(message.message) from e
+            raise RuntimeError(message.message) from None
         return survey_id

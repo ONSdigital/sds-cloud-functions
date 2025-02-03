@@ -26,10 +26,10 @@ class RequestService:
         url = f"{CONFIG.SDS_URL}{CONFIG.GET_SCHEMA_METADATA_ENDPOINT}{survey_id}"
         response = HTTP_SERVICE.make_get_request(url, sds_headers=True)
         # If the response status code is 404, a new survey is being onboarded.
-        if response.status_code != 200 or response.status_code != 404:
+        if response.status_code != 200 and response.status_code != 404:
             message = PubSubMessage(
                 "SchemaMetadataError",
-                f"Failed to fetch schema metadata for survey {survey_id}",
+                f"Failed to fetch schema metadata for survey {survey_id}. Status code: {response.status_code}",
                 "N/A",
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
@@ -47,7 +47,7 @@ class RequestService:
         """
         logger.info(f"Posting schema for survey {schema.survey_id}")
         url = f"{CONFIG.SDS_URL}{CONFIG.POST_SCHEMA_ENDPOINT}{schema.survey_id}"
-        response = HTTP_SERVICE.make_post_request(url, schema)
+        response = HTTP_SERVICE.make_post_request(url, schema.json)
         if response.status_code != 200:
             message = PubSubMessage(
                 "SchemaPostError",
@@ -107,7 +107,7 @@ class RequestService:
         """
         try:
             decoded_response = response.json()
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             message = PubSubMessage(
                 "JSONDecodeError",
                 "Failed to decode JSON response.",
@@ -115,7 +115,7 @@ class RequestService:
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
             PUB_SUB_PUBLISHER.send_message(message)
-            raise RuntimeError(message.message) from e
+            raise RuntimeError(message.message) from None
         return decoded_response
 
 

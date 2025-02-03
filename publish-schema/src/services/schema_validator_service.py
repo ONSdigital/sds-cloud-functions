@@ -41,7 +41,7 @@ class SchemaValidatorService:
                                         schema.filepath, CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID, )
                 PUB_SUB_PUBLISHER.send_message(message)
                 raise RuntimeError(message.message)
-        except KeyError as e:
+        except KeyError:
             message = PubSubMessage(
                 "KeyError",
                 f"Schema version not found in {schema.filepath}.",
@@ -49,7 +49,7 @@ class SchemaValidatorService:
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
             PUB_SUB_PUBLISHER.send_message(message)
-            raise RuntimeError(message.message) from e
+            raise RuntimeError(message.message) from None
 
     @staticmethod
     def _check_duplicate_versions(schema: Schema):
