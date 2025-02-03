@@ -1,5 +1,5 @@
 import json
-import logging
+from config.logging_config import logging
 
 logger = logging.getLogger(__name__)
 

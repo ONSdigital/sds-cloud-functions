@@ -1,5 +1,3 @@
-import json
-
 from config.config import CONFIG
 from google.cloud.pubsub_v1 import PublisherClient
 from pubsub.pub_sub_message import PubSubMessage
@@ -8,15 +6,6 @@ from pubsub.pub_sub_message import PubSubMessage
 class PubSubPublisher:
     def __init__(self):
         self.publisher = PublisherClient()
-
-    def to_json(self) -> str:
-        """
-        Serialise the PubSubMessage to JSON string.
-
-        Returns:
-            str: The JSON string representation of the PubSubMessage.
-        """
-        return json.dumps(self.__dict__)
 
     def send_message(self, message: PubSubMessage):
         """

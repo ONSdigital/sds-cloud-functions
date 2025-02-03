@@ -1,5 +1,4 @@
-import logging
-
+from config.logging_config import logging
 import google.oauth2.id_token
 import requests
 from requests.adapters import HTTPAdapter

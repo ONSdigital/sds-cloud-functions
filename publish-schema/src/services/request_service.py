@@ -1,5 +1,5 @@
 import json
-import logging
+from config.logging_config import logging
 
 import requests
 from config.config import CONFIG

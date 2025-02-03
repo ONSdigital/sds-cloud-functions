@@ -1,4 +1,4 @@
-import logging
+from config.logging_config import logging
 
 from config.config import CONFIG
 from pubsub.pub_sub_message import PubSubMessage

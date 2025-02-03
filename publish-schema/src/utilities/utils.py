@@ -1,4 +1,4 @@
-import logging
+from config.logging_config import logging
 from pathlib import Path
 
 from config.config import CONFIG
