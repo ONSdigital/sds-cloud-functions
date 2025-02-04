@@ -29,7 +29,7 @@ class RequestService:
         if response.status_code != 200 and response.status_code != 404:
             message = PubSubMessage(
                 "SchemaMetadataError",
-                f"Failed to fetch schema metadata for survey {survey_id}. Status code: {response.status_code}",
+                f"Failed to fetch schema metadata for survey {survey_id}. Status code: {response.status_code}.",
                 "N/A",
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )

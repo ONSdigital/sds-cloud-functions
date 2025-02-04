@@ -37,7 +37,7 @@ class SchemaValidatorService:
                 message = PubSubMessage(
                     "SchemaVersionError",
                     f"Schema version for {schema.filepath} does not match. Expected "
-                    f"{trimmed_filename} got {schema_version}",
+                    f"{trimmed_filename} got {schema_version}. Filepath: {schema.filepath}",
                     schema.filepath,
                     CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
                 )
@@ -46,7 +46,7 @@ class SchemaValidatorService:
         except KeyError:
             message = PubSubMessage(
                 "KeyError",
-                f"Schema version not found in {schema.filepath}.",
+                f"Schema version not found in file: {schema.filepath}.",
                 schema.filepath,
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
@@ -74,7 +74,7 @@ class SchemaValidatorService:
             if new_schema_version == version["schema_version"]:
                 message = PubSubMessage(
                     "SchemaVersionError",
-                    f"Schema version {new_schema_version} already exists for survey {schema.survey_id}",
+                    f"Schema version {new_schema_version} already exists for survey {schema.survey_id}. Schema file: {schema.filepath}",
                     "N/A",
                     CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
                 )
