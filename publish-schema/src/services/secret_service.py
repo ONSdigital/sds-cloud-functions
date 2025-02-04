@@ -3,8 +3,7 @@ import json
 from config.config import CONFIG
 from google.api_core.exceptions import GoogleAPICallError, RetryError
 from google.cloud import secretmanager
-from pubsub.pub_sub_message import PubSubMessage
-from pubsub.pub_sub_publisher import PUB_SUB_PUBLISHER
+from utilities.utils import raise_error
 
 
 class SecretService:
@@ -25,14 +24,12 @@ class SecretService:
             secret_json = json.loads(secret)
             return secret_json["web"]["client_id"]
         except KeyError:
-            message = PubSubMessage(
+            raise_error(
                 "KeyError",
                 "OAuth client ID not found in secret.",
                 "N/A",
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
-            PUB_SUB_PUBLISHER.send_message(message)
-            raise RuntimeError(message.message) from None
 
     def _get_secret_version(self) -> str:
         """
@@ -48,14 +45,12 @@ class SecretService:
             response = self.client.access_secret_version(name=name)
             return response.payload.data.decode("UTF-8")
         except (GoogleAPICallError, RetryError):
-            message = PubSubMessage(
+            raise_error(
                 "SecretError",
                 "Failed to access secret version from Google Cloud Secret Manager.",
                 "N/A",
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
-            PUB_SUB_PUBLISHER.send_message(message)
-            raise RuntimeError(message.message) from None
 
 
 SECRET_SERVICE = SecretService()

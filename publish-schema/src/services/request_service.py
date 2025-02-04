@@ -1,12 +1,11 @@
 import json
-from config.logging_config import logging
 
 import requests
 from config.config import CONFIG
-from pubsub.pub_sub_message import PubSubMessage
-from pubsub.pub_sub_publisher import PUB_SUB_PUBLISHER
+from config.logging_config import logging
 from schema.schema import Schema
 from services.http_service import HTTP_SERVICE
+from utilities.utils import raise_error
 
 logger = logging.getLogger(__name__)
 
@@ -27,14 +26,12 @@ class RequestService:
         response = HTTP_SERVICE.make_get_request(url, sds_headers=True)
         # If the response status code is 404, a new survey is being onboarded.
         if response.status_code != 200 and response.status_code != 404:
-            message = PubSubMessage(
+            raise_error(
                 "SchemaMetadataError",
                 f"Failed to fetch schema metadata for survey {survey_id}. Status code: {response.status_code}.",
                 "N/A",
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
-            PUB_SUB_PUBLISHER.send_message(message)
-            raise RuntimeError(message.message)
         return response
 
     @staticmethod
@@ -49,24 +46,14 @@ class RequestService:
         url = f"{CONFIG.SDS_URL}{CONFIG.POST_SCHEMA_ENDPOINT}{schema.survey_id}"
         response = HTTP_SERVICE.make_post_request(url, schema.json)
         if response.status_code != 200:
-            message = PubSubMessage(
+            raise_error(
                 "SchemaPostError",
                 f"Failed to post schema for survey {schema.survey_id}",
                 schema.filepath,
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
-            PUB_SUB_PUBLISHER.send_message(message)
-            raise RuntimeError(message.message)
         else:
-            message = PubSubMessage(
-                "SchemaPostSuccess",
-                f"Schema {schema.filepath} posted for survey {schema.survey_id}",
-                schema.filepath,
-                CONFIG.PUBLISH_SCHEMA_SUCCESS_TOPIC_ID,
-            )
-            # redundant due to SDS posting success itself to this topic ?
-            PUB_SUB_PUBLISHER.send_message(message)
-            logger.info(message.message)
+            logger.info(f"Schema {schema.filepath} posted for survey {schema.survey_id}")
 
     def fetch_raw_schema(self, path: str) -> dict:
         """
@@ -83,14 +70,12 @@ class RequestService:
         response = HTTP_SERVICE.make_get_request(url)
 
         if response.status_code != 200:
-            message = PubSubMessage(
+            raise_error(
                 "SchemaFetchError",
                 f"Failed to fetch schema from GitHub. Status code: {response.status_code}. URL: {url}",
                 path,
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
-            PUB_SUB_PUBLISHER.send_message(message)
-            raise RuntimeError(message.message)
         schema = self._decode_json_response(response)
         return schema
 
@@ -108,14 +93,12 @@ class RequestService:
         try:
             decoded_response = response.json()
         except json.JSONDecodeError:
-            message = PubSubMessage(
+            raise_error(
                 "JSONDecodeError",
                 "Failed to decode JSON response.",
                 "N/A",
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
-            PUB_SUB_PUBLISHER.send_message(message)
-            raise RuntimeError(message.message) from None
         return decoded_response
 
 

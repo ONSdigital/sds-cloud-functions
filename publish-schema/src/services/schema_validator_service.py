@@ -1,10 +1,8 @@
 from config.config import CONFIG
 from config.logging_config import logging
-from pubsub.pub_sub_message import PubSubMessage
-from pubsub.pub_sub_publisher import PUB_SUB_PUBLISHER
 from schema.schema import Schema
 from services.request_service import REQUEST_SERVICE
-from utilities.utils import split_filename
+from utilities.utils import split_filename, raise_error
 
 logger = logging.getLogger(__name__)
 
@@ -31,15 +29,13 @@ class SchemaValidatorService:
         logger.info(f"Verifying schema version for {schema.filepath}")
         trimmed_filename = split_filename(schema.filepath)
         if schema.schema_version != trimmed_filename:
-            message = PubSubMessage(
+            raise_error(
                 "SchemaVersionError",
                 f"Schema version for {schema.filepath} does not match. Expected "
                 f"{trimmed_filename} got {schema.schema_version}. Filepath: {schema.filepath}",
                 schema.filepath,
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
-            PUB_SUB_PUBLISHER.send_message(message)
-            raise RuntimeError(message.message)
 
     @staticmethod
     def _check_duplicate_versions(schema: Schema):
@@ -57,15 +53,13 @@ class SchemaValidatorService:
 
         for version in schema_metadata.json():
             if schema.schema_version == version["schema_version"]:
-                message = PubSubMessage(
+                raise_error(
                     "SchemaVersionError",
                     f"Schema version {schema.schema_version} already exists for survey {schema.survey_id}. Schema "
                     f"file: {schema.filepath}",
                     "N/A",
                     CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
                 )
-                PUB_SUB_PUBLISHER.send_message(message)
-                raise RuntimeError(message.message)
 
 
 SCHEMA_VALIDATOR_SERVICE = SchemaValidatorService()
