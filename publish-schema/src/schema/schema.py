@@ -32,6 +32,12 @@ class Schema:
         return survey_id
 
     def get_schema_version_from_json(self):
+        """
+        Fetches the schema version from the schema JSON.
+
+        Returns
+            str: the schema version.
+        """
         try:
             schema_version = self.json["properties"]["schema_version"]["const"]
         except KeyError:
