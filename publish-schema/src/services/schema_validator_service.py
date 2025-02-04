@@ -1,6 +1,5 @@
-from config.logging_config import logging
-
 from config.config import CONFIG
+from config.logging_config import logging
 from pubsub.pub_sub_message import PubSubMessage
 from pubsub.pub_sub_publisher import PUB_SUB_PUBLISHER
 from schema.schema import Schema
@@ -29,35 +28,23 @@ class SchemaValidatorService:
         Parameters:
             schema (Schema): the schema object to be posted.
         """
-        trimmed_filename = split_filename(schema.filepath)
         logger.info(f"Verifying schema version for {schema.filepath}")
-        try:
-            schema_version = schema.json["properties"]["schema_version"]["const"]
-            if schema_version != trimmed_filename:
-                message = PubSubMessage(
-                    "SchemaVersionError",
-                    f"Schema version for {schema.filepath} does not match. Expected "
-                    f"{trimmed_filename} got {schema_version}. Filepath: {schema.filepath}",
-                    schema.filepath,
-                    CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
-                )
-                PUB_SUB_PUBLISHER.send_message(message)
-                raise RuntimeError(message.message)
-        except KeyError:
+        trimmed_filename = split_filename(schema.filepath)
+        if schema.schema_version != trimmed_filename:
             message = PubSubMessage(
-                "KeyError",
-                f"Schema version not found in file: {schema.filepath}.",
+                "SchemaVersionError",
+                f"Schema version for {schema.filepath} does not match. Expected "
+                f"{trimmed_filename} got {schema.schema_version}. Filepath: {schema.filepath}",
                 schema.filepath,
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
             PUB_SUB_PUBLISHER.send_message(message)
-            raise RuntimeError(message.message) from None
+            raise RuntimeError(message.message)
 
     @staticmethod
     def _check_duplicate_versions(schema: Schema):
         """
-        Method to call the schema_metadata endpoint and check that the schema_version for the new schema is not
-        already present in SDS.
+        Check that the schema_version for the new schema is not already present in SDS.
 
         Parameters:
             schema (Schema): the schema to be posted.
@@ -68,13 +55,12 @@ class SchemaValidatorService:
         if schema_metadata.status_code == 404:
             return
 
-        new_schema_version = schema.json["properties"]["schema_version"]["const"]
-
         for version in schema_metadata.json():
-            if new_schema_version == version["schema_version"]:
+            if schema.schema_version == version["schema_version"]:
                 message = PubSubMessage(
                     "SchemaVersionError",
-                    f"Schema version {new_schema_version} already exists for survey {schema.survey_id}. Schema file: {schema.filepath}",
+                    f"Schema version {schema.schema_version} already exists for survey {schema.survey_id}. Schema "
+                    f"file: {schema.filepath}",
                     "N/A",
                     CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
                 )

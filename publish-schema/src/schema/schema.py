@@ -7,9 +7,10 @@ class Schema:
     def __init__(self, schema_json: dict, filepath: str) -> None:
         self.json = schema_json
         self.filepath = filepath
-        self.survey_id = self.set_survey_id()
+        self.survey_id = self.get_survey_id_from_json()
+        self.schema_version = self.get_schema_version_from_json()
 
-    def set_survey_id(self) -> str:
+    def get_survey_id_from_json(self) -> str:
         """
         Fetches the survey ID from the schema JSON.
 
@@ -21,10 +22,26 @@ class Schema:
         except (KeyError, IndexError):
             message = PubSubMessage(
                 "SurveyIdError",
-                "Failed to fetch survey_id from schema JSON. Check the schema JSON for the correct format.",
+                f"Failed to fetch survey_id from schema JSON. Check the schema JSON contains a survey ID. Filepath: "
+                f"{self.filepath}",
                 "N/A",
                 CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
             PUB_SUB_PUBLISHER.send_message(message)
             raise RuntimeError(message.message) from None
         return survey_id
+
+    def get_schema_version_from_json(self):
+        try:
+            schema_version = self.json["properties"]["schema_version"]["const"]
+        except KeyError:
+            message = PubSubMessage(
+                "KeyError",
+                f"Failed to fetch schema_version from schema JSON. Check the schema JSON contains a schema version. "
+                f"Filepath: {self.filepath}",
+                self.filepath,
+                CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
+            )
+            PUB_SUB_PUBLISHER.send_message(message)
+            raise RuntimeError(message.message) from None
+        return schema_version
