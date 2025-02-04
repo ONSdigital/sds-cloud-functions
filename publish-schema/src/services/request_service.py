@@ -30,7 +30,6 @@ class RequestService:
                 "SchemaMetadataError",
                 f"Failed to fetch schema metadata for survey {survey_id}. Status code: {response.status_code}.",
                 "N/A",
-                CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
         return response
 
@@ -50,7 +49,6 @@ class RequestService:
                 "SchemaPostError",
                 f"Failed to post schema for survey {schema.survey_id}",
                 schema.filepath,
-                CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
         else:
             logger.info(f"Schema {schema.filepath} posted for survey {schema.survey_id}")
@@ -74,7 +72,6 @@ class RequestService:
                 "SchemaFetchError",
                 f"Failed to fetch schema from GitHub. Status code: {response.status_code}. URL: {url}",
                 path,
-                CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
         schema = self._decode_json_response(response)
         return schema
@@ -97,7 +94,6 @@ class RequestService:
                 "JSONDecodeError",
                 "Failed to decode JSON response.",
                 "N/A",
-                CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
         return decoded_response
 

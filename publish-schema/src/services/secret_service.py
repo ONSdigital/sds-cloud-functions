@@ -28,7 +28,6 @@ class SecretService:
                 "KeyError",
                 "OAuth client ID not found in secret.",
                 "N/A",
-                CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
 
     def _get_secret_version(self) -> str:
@@ -49,7 +48,6 @@ class SecretService:
                 "SecretError",
                 "Failed to access secret version from Google Cloud Secret Manager.",
                 "N/A",
-                CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
 
 

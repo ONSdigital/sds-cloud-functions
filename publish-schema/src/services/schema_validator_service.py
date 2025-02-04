@@ -1,4 +1,3 @@
-from config.config import CONFIG
 from config.logging_config import logging
 from schema.schema import Schema
 from services.request_service import REQUEST_SERVICE
@@ -34,7 +33,6 @@ class SchemaValidatorService:
                 f"Schema version for {schema.filepath} does not match. Expected "
                 f"{trimmed_filename} got {schema.schema_version}. Filepath: {schema.filepath}",
                 schema.filepath,
-                CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
 
     @staticmethod
@@ -58,7 +56,6 @@ class SchemaValidatorService:
                     f"Schema version {schema.schema_version} already exists for survey {schema.survey_id}. Schema "
                     f"file: {schema.filepath}",
                     "N/A",
-                    CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
                 )
 
 

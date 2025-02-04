@@ -1,4 +1,3 @@
-from config.config import CONFIG
 from utilities.utils import raise_error
 
 
@@ -24,7 +23,6 @@ class Schema:
                 f"Failed to fetch survey_id from schema JSON. Check the schema JSON contains a survey ID. Filepath: "
                 f"{self.filepath}",
                 "N/A",
-                CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
         return survey_id
 
@@ -43,6 +41,5 @@ class Schema:
                 f"Failed to fetch schema_version from schema JSON. Check the schema JSON contains a schema version. "
                 f"Filepath: {self.filepath}",
                 self.filepath,
-                CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID,
             )
         return schema_version
