@@ -1,8 +1,9 @@
 import base64
-from config.logging_config import logging
 
 import functions_framework
 from cloudevents.http import CloudEvent
+from config.logging_config import logging
+from models.error_models import Error
 from schema.schema import Schema
 from services.request_service import REQUEST_SERVICE
 from services.schema_validator_service import SCHEMA_VALIDATOR_SERVICE
@@ -29,4 +30,5 @@ def publish_schema(cloud_event: CloudEvent) -> None:
 
         REQUEST_SERVICE.post_schema(schema)
     except RuntimeError as e:
-        logger.error(e)
+        if not isinstance(e.__cause__, Error):
+            logger.error(e)

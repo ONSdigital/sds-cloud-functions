@@ -3,9 +3,14 @@ import json
 import requests
 from config.config import CONFIG
 from config.logging_config import logging
+from models.error_models import (
+    JSONDecodeError,
+    SchemaFetchError,
+    SchemaMetadataError,
+    SchemaPostError,
+)
 from schema.schema import Schema
 from services.http_service import HTTP_SERVICE
-from utilities.utils import raise_error
 
 logger = logging.getLogger(__name__)
 
@@ -26,11 +31,7 @@ class RequestService:
         response = HTTP_SERVICE.make_get_request(url, sds_headers=True)
         # If the response status code is 404, a new survey is being onboarded.
         if response.status_code != 200 and response.status_code != 404:
-            raise_error(
-                "SchemaMetadataError",
-                f"Failed to fetch schema metadata for survey {survey_id}. Status code: {response.status_code}.",
-                "N/A",
-            )
+            SchemaMetadataError(survey_id).raise_error()
         return response
 
     @staticmethod
@@ -45,13 +46,11 @@ class RequestService:
         url = f"{CONFIG.SDS_URL}{CONFIG.POST_SCHEMA_ENDPOINT}{schema.survey_id}"
         response = HTTP_SERVICE.make_post_request(url, schema.json)
         if response.status_code != 200:
-            raise_error(
-                "SchemaPostError",
-                f"Failed to post schema for survey {schema.survey_id}",
-                schema.filepath,
-            )
+            SchemaPostError(schema.filepath).raise_error()
         else:
-            logger.info(f"Schema {schema.filepath} posted for survey {schema.survey_id}")
+            logger.info(
+                f"Schema {schema.filepath} posted for survey {schema.survey_id}"
+            )
 
     def fetch_raw_schema(self, path: str) -> dict:
         """
@@ -68,11 +67,7 @@ class RequestService:
         response = HTTP_SERVICE.make_get_request(url)
 
         if response.status_code != 200:
-            raise_error(
-                "SchemaFetchError",
-                f"Failed to fetch schema from GitHub. Status code: {response.status_code}. URL: {url}",
-                path,
-            )
+            SchemaFetchError(path, response.status_code, url).raise_error()
         schema = self._decode_json_response(response)
         return schema
 
@@ -91,12 +86,7 @@ class RequestService:
             decoded_response = response.json()
             return decoded_response
         except json.JSONDecodeError:
-            raise_error(
-                "JSONDecodeError",
-                "Failed to decode JSON response.",
-                "N/A",
-            )
-
+            JSONDecodeError("N/A").raise_error()
 
 
 REQUEST_SERVICE = RequestService()

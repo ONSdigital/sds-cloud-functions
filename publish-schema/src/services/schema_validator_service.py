@@ -1,13 +1,14 @@
 from config.logging_config import logging
+from models.error_models import SchemaDuplicationError, SchemaVersionMismatchError
 from schema.schema import Schema
 from services.request_service import REQUEST_SERVICE
-from utilities.utils import split_filename, raise_error
+from utilities.utils import split_filename
 
 logger = logging.getLogger(__name__)
 
 
 class SchemaValidatorService:
-    def validate_schema(self, schema: Schema):
+    def validate_schema(self, schema: Schema) -> None:
         """
         Validate the schema by verifying the version and checking for duplicate versions.
 
@@ -18,7 +19,7 @@ class SchemaValidatorService:
         self._check_duplicate_versions(schema)
 
     @staticmethod
-    def _verify_version(schema: Schema):
+    def _verify_version(schema: Schema) -> None:
         """
         Method to verify the schema version in the JSON matches the filename.
 
@@ -28,15 +29,10 @@ class SchemaValidatorService:
         logger.info(f"Verifying schema version for {schema.filepath}")
         trimmed_filename = split_filename(schema.filepath)
         if schema.schema_version != trimmed_filename:
-            raise_error(
-                "SchemaVersionError",
-                f"Schema version for {schema.filepath} does not match. Expected "
-                f"{trimmed_filename} got {schema.schema_version}. Filepath: {schema.filepath}",
-                schema.filepath,
-            )
+            SchemaVersionMismatchError(schema.filepath).raise_error()
 
     @staticmethod
-    def _check_duplicate_versions(schema: Schema):
+    def _check_duplicate_versions(schema: Schema) -> None:
         """
         Check that the schema_version for the new schema is not already present in SDS.
 
@@ -51,12 +47,7 @@ class SchemaValidatorService:
 
         for version in schema_metadata.json():
             if schema.schema_version == version["schema_version"]:
-                raise_error(
-                    "SchemaVersionError",
-                    f"Schema version {schema.schema_version} already exists for survey {schema.survey_id}. Schema "
-                    f"file: {schema.filepath}",
-                    "N/A",
-                )
+                SchemaDuplicationError(schema.filepath).raise_error()
 
 
 SCHEMA_VALIDATOR_SERVICE = SchemaValidatorService()

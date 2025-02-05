@@ -1,3 +1,4 @@
+from models.error_models import SchemaVersionError, SurveyIDError
 from utilities.utils import raise_error
 
 
@@ -19,13 +20,7 @@ class Schema:
             survey_id = self.json["properties"]["survey_id"]["enum"][0]
             return survey_id
         except (KeyError, IndexError):
-            raise_error(
-                "SurveyIdError",
-                f"Failed to fetch survey_id from schema JSON. Check the schema JSON contains a survey ID. Filepath: "
-                f"{self.filepath}",
-                "N/A",
-            )
-
+            raise_error(SurveyIDError(self.filepath))
 
     def get_schema_version_from_json(self) -> str | None:
         """
@@ -38,10 +33,4 @@ class Schema:
             schema_version = self.json["properties"]["schema_version"]["const"]
             return schema_version
         except KeyError:
-            raise_error(
-                "KeyError",
-                f"Failed to fetch schema_version from schema JSON. Check the schema JSON contains a schema version. "
-                f"Filepath: {self.filepath}",
-                self.filepath,
-            )
-
+            SchemaVersionError(self.filepath)

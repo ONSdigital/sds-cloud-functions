@@ -1,6 +1,6 @@
-from config.logging_config import logging
 import google.oauth2.id_token
 import requests
+from config.logging_config import logging
 from requests.adapters import HTTPAdapter
 from services.secret_service import SECRET_SERVICE
 from urllib3 import Retry

@@ -3,7 +3,7 @@ import json
 from config.config import CONFIG
 from google.api_core.exceptions import GoogleAPICallError, RetryError
 from google.cloud import secretmanager
-from utilities.utils import raise_error
+from models.error_models import SecretError, SecretKeyError
 
 
 class SecretService:
@@ -24,11 +24,7 @@ class SecretService:
             secret_json = json.loads(secret)
             return secret_json["web"]["client_id"]
         except KeyError:
-            raise_error(
-                "KeyError",
-                "OAuth client ID not found in secret.",
-                "N/A",
-            )
+            SecretKeyError("N/A").raise_error()
 
     def _get_secret_version(self) -> str | None:
         """
@@ -44,11 +40,7 @@ class SecretService:
             response = self.client.access_secret_version(name=name)
             return response.payload.data.decode("UTF-8")
         except (GoogleAPICallError, RetryError):
-            raise_error(
-                "SecretError",
-                "Failed to access secret version from Google Cloud Secret Manager.",
-                "N/A",
-            )
+            SecretError("N/A").raise_error()
 
 
 SECRET_SERVICE = SecretService()
