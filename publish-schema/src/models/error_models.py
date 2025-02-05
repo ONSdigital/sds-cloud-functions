@@ -2,7 +2,7 @@ import json
 
 from config.config import CONFIG
 from config.logging_config import logging
-from services.pub_sub_service import PUB_SUB_SERVICE
+from services.pub_sub_service import PubSubService
 
 logger = logging.getLogger(__name__)
 
@@ -16,6 +16,7 @@ class Error:
         self.error_type = error_type
         self.message = message
         self.filepath = filepath
+        self.pubsub_publisher = PubSubService()
 
     def generate_message(self) -> str:
         """Generate a JSON string representation of the PubSubMessage to be sent.
@@ -36,7 +37,7 @@ class Error:
         logger.error(
             f"Error Type: {self.error_type}, Message: {self.message}, Filepath: {self.filepath}"
         )
-        PUB_SUB_SERVICE.send_message(self, CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID)
+        self.pubsub_publisher.send_message(self, CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID)
         raise RuntimeError(self) from self
 
 
@@ -107,7 +108,7 @@ class SchemaPostError(Error):
 class SchemaMetadataError(Error):
     def __init__(self, survey_id: str):
         self.error_type = "SchemaMetadataError"
-        self.message = "Failed to fetch schema metadata."
+        self.message = f"Failed to fetch schema metadata for survey {survey_id}."
         self.filepath = "N/A"
         super().__init__(self.error_type, self.message, self.filepath)
 

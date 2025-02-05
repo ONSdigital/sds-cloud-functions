@@ -3,7 +3,7 @@ from google.cloud.pubsub_v1 import PublisherClient
 from models.error_models import Error
 
 
-class PubSubPublisher:
+class PubSubService:
     def __init__(self):
         self.publisher = PublisherClient()
 
@@ -18,6 +18,3 @@ class PubSubPublisher:
         topic_path = self.publisher.topic_path(CONFIG.PROJECT_ID, topic_id)
         message_json = error.generate_message()
         self.publisher.publish(topic_path, data=message_json.encode("utf-8"))
-
-
-PUB_SUB_SERVICE = PubSubPublisher()
