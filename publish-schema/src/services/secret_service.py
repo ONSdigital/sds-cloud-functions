@@ -12,7 +12,7 @@ class SecretService:
         self.project_id = CONFIG.PROJECT_ID
         self.secret_id = CONFIG.SECRET_ID
 
-    def get_oauth_client_id(self) -> str:
+    def get_oauth_client_id(self) -> str | None:
         """
         Get the OAuth client ID for authenticating with SDS.
 
@@ -30,7 +30,7 @@ class SecretService:
                 "N/A",
             )
 
-    def _get_secret_version(self) -> str:
+    def _get_secret_version(self) -> str | None:
         """
         Access the latest secret version from Google Cloud Secret Manager.
 

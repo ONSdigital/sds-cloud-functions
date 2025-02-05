@@ -77,7 +77,7 @@ class RequestService:
         return schema
 
     @staticmethod
-    def _decode_json_response(response: requests.Response) -> dict:
+    def _decode_json_response(response: requests.Response) -> dict | None:
         """
         Decode the JSON response from a requests.Response object.
 
@@ -89,13 +89,14 @@ class RequestService:
         """
         try:
             decoded_response = response.json()
+            return decoded_response
         except json.JSONDecodeError:
             raise_error(
                 "JSONDecodeError",
                 "Failed to decode JSON response.",
                 "N/A",
             )
-        return decoded_response
+
 
 
 REQUEST_SERVICE = RequestService()

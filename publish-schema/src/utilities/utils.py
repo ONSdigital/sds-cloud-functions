@@ -8,7 +8,7 @@ from pubsub.pub_sub_publisher import PUB_SUB_PUBLISHER
 logger = logging.getLogger(__name__)
 
 
-def split_filename(path: str) -> str:
+def split_filename(path: str) -> str | None:
     """
     Splits the filename without extension from the path.
 
