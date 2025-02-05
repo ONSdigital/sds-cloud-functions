@@ -19,4 +19,4 @@ def split_filename(path: str) -> str | None:
     try:
         return Path(path).stem
     except TypeError:
-        FilepathError(path).raise_error()
+        raise FilepathError(path) from None

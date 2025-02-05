@@ -4,7 +4,7 @@ import requests
 from config.config import CONFIG
 from config.logging_config import logging
 from models.error_models import (
-    JSONDecodeError,
+    SchemaJSONDecodeError,
     SchemaFetchError,
     SchemaMetadataError,
     SchemaPostError,
@@ -31,7 +31,7 @@ class RequestService:
         response = HTTP_SERVICE.make_get_request(url, sds_headers=True)
         # If the response status code is 404, a new survey is being onboarded.
         if response.status_code != 200 and response.status_code != 404:
-            SchemaMetadataError(survey_id).raise_error()
+            raise SchemaMetadataError(survey_id)
         return response
 
     @staticmethod
@@ -46,7 +46,7 @@ class RequestService:
         url = f"{CONFIG.SDS_URL}{CONFIG.POST_SCHEMA_ENDPOINT}{schema.survey_id}"
         response = HTTP_SERVICE.make_post_request(url, schema.json)
         if response.status_code != 200:
-            SchemaPostError(schema.filepath).raise_error()
+            raise SchemaPostError(schema.filepath)
         else:
             logger.info(
                 f"Schema {schema.filepath} posted for survey {schema.survey_id}"
@@ -67,7 +67,7 @@ class RequestService:
         response = HTTP_SERVICE.make_get_request(url)
 
         if response.status_code != 200:
-            SchemaFetchError(path, response.status_code, url).raise_error()
+            raise SchemaFetchError(path, response.status_code, url)
         schema = self._decode_json_response(response)
         return schema
 
@@ -86,7 +86,7 @@ class RequestService:
             decoded_response = response.json()
             return decoded_response
         except json.JSONDecodeError:
-            JSONDecodeError("N/A").raise_error()
+            raise SchemaJSONDecodeError("N/A")
 
 
 REQUEST_SERVICE = RequestService()

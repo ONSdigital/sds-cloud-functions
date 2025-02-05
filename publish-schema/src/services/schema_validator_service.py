@@ -29,7 +29,7 @@ class SchemaValidatorService:
         logger.info(f"Verifying schema version for {schema.filepath}")
         trimmed_filename = split_filename(schema.filepath)
         if schema.schema_version != trimmed_filename:
-            SchemaVersionMismatchError(schema.filepath).raise_error()
+            raise SchemaVersionMismatchError(schema.filepath)
 
     @staticmethod
     def _check_duplicate_versions(schema: Schema) -> None:
@@ -47,7 +47,7 @@ class SchemaValidatorService:
 
         for version in schema_metadata.json():
             if schema.schema_version == version["schema_version"]:
-                SchemaDuplicationError(schema.filepath).raise_error()
+                raise SchemaDuplicationError(schema.filepath)
 
 
 SCHEMA_VALIDATOR_SERVICE = SchemaValidatorService()

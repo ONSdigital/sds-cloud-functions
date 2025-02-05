@@ -1,13 +1,9 @@
-import json
-
-from config.config import CONFIG
 from config.logging_config import logging
-from services.pub_sub_service import PubSubService
 
 logger = logging.getLogger(__name__)
 
 
-class Error:
+class SchemaPublishError(Exception):
     """
     Base class for all error types - raises a RuntimeError to aid compatibility with GCP monitoring.
     """
@@ -16,32 +12,9 @@ class Error:
         self.error_type = error_type
         self.message = message
         self.filepath = filepath
-        self.pubsub_publisher = PubSubService()
-
-    def generate_message(self) -> str:
-        """Generate a JSON string representation of the PubSubMessage to be sent.
-
-        Returns:
-            str: JSON string representation of the PubSubMessage without topic.
-        """
-        return json.dumps(
-            {
-                "message_type": self.error_type,
-                "message": self.message,
-                "schema_file": self.filepath,
-            }
-        )
-
-    def raise_error(self) -> None:
-        """Log the error, send a Pub/Sub message, and raise a RuntimeError."""
-        logger.error(
-            f"Error Type: {self.error_type}, Message: {self.message}, Filepath: {self.filepath}"
-        )
-        self.pubsub_publisher.send_message(self, CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID)
-        raise RuntimeError(self) from self
 
 
-class FilepathError(Error):
+class FilepathError(SchemaPublishError):
     def __init__(self, filepath: str):
         self.error_type = "FilepathError"
         self.message = "Failed to split filename from path."
@@ -49,7 +22,7 @@ class FilepathError(Error):
         super().__init__(self.error_type, self.message, filepath)
 
 
-class SchemaDuplicationError(Error):
+class SchemaDuplicationError(SchemaPublishError):
     def __init__(self, filepath: str):
         self.error_type = "SchemaVersionError"
         self.message = "Schema version already exists in SDS for new survey."
@@ -57,7 +30,7 @@ class SchemaDuplicationError(Error):
         super().__init__(self.error_type, self.message, filepath)
 
 
-class SchemaVersionMismatchError(Error):
+class SchemaVersionMismatchError(SchemaPublishError):
     def __init__(self, filepath: str):
         self.error_type = "SchemaVersionError"
         self.message = "Schema version does not match filename."
@@ -65,7 +38,7 @@ class SchemaVersionMismatchError(Error):
         super().__init__(self.error_type, self.message, filepath)
 
 
-class SurveyIDError(Error):
+class SurveyIDError(SchemaPublishError):
     def __init__(self, filepath: str):
         self.error_type = "SurveyIdError"
         self.message = "Failed to fetch survey_id from schema JSON. Check the schema JSON contains a survey ID."
@@ -73,7 +46,7 @@ class SurveyIDError(Error):
         super().__init__(self.error_type, self.message, filepath)
 
 
-class SchemaVersionError(Error):
+class SchemaVersionError(SchemaPublishError):
     def __init__(self, filepath: str):
         self.error_type = "SchemaVersionError"
         self.message = "Failed to fetch schema_version from schema JSON. Check the schema JSON contains a schema version."
@@ -81,7 +54,7 @@ class SchemaVersionError(Error):
         super().__init__(self.error_type, self.message, filepath)
 
 
-class JSONDecodeError(Error):
+class SchemaJSONDecodeError(SchemaPublishError):
     def __init__(self, filepath: str):
         self.error_type = "JSONDecodeError"
         self.message = "Failed to decode JSON response."
@@ -89,7 +62,7 @@ class JSONDecodeError(Error):
         super().__init__(self.error_type, self.message, filepath)
 
 
-class SchemaFetchError(Error):
+class SchemaFetchError(SchemaPublishError):
     def __init__(self, filepath: str, status_code: int, url: str):
         self.error_type = "SchemaFetchError"
         self.message = f"Failed to fetch schema from GitHub. Status code: {status_code}. URL: {url}"
@@ -97,7 +70,7 @@ class SchemaFetchError(Error):
         super().__init__(self.error_type, self.message, filepath)
 
 
-class SchemaPostError(Error):
+class SchemaPostError(SchemaPublishError):
     def __init__(self, filepath: str):
         self.error_type = "SchemaPostError"
         self.message = "Failed to post schema."
@@ -105,7 +78,7 @@ class SchemaPostError(Error):
         super().__init__(self.error_type, self.message, filepath)
 
 
-class SchemaMetadataError(Error):
+class SchemaMetadataError(SchemaPublishError):
     def __init__(self, survey_id: str):
         self.error_type = "SchemaMetadataError"
         self.message = f"Failed to fetch schema metadata for survey {survey_id}."
@@ -113,7 +86,7 @@ class SchemaMetadataError(Error):
         super().__init__(self.error_type, self.message, self.filepath)
 
 
-class SecretError(Error):
+class SecretError(SchemaPublishError):
     def __init__(self, filepath: str):
         self.error_type = "SecretError"
         self.message = (
@@ -123,7 +96,7 @@ class SecretError(Error):
         super().__init__(self.error_type, self.message, filepath)
 
 
-class SecretKeyError(Error):
+class SecretKeyError(SchemaPublishError):
     def __init__(self, filepath: str):
         self.error_type = "SecretKeyError"
         self.message = "OAuth client ID not found in secret."

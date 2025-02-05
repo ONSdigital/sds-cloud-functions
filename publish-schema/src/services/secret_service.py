@@ -24,7 +24,7 @@ class SecretService:
             secret_json = json.loads(secret)
             return secret_json["web"]["client_id"]
         except KeyError:
-            SecretKeyError("N/A").raise_error()
+            raise SecretKeyError("N/A") from None
 
     def _get_secret_version(self) -> str | None:
         """
@@ -40,7 +40,7 @@ class SecretService:
             response = self.client.access_secret_version(name=name)
             return response.payload.data.decode("UTF-8")
         except (GoogleAPICallError, RetryError):
-            SecretError("N/A").raise_error()
+            raise SecretError("N/A") from None
 
 
 SECRET_SERVICE = SecretService()
