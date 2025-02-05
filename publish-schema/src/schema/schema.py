@@ -1,6 +1,6 @@
 from models.error_models import (
-    SchemaVersionSchemaPublishError,
-    SurveyIDSchemaPublishError,
+    SchemaVersionError,
+    SurveyIDError,
 )
 
 
@@ -22,7 +22,7 @@ class Schema:
             survey_id = self.json["properties"]["survey_id"]["enum"][0]
             return survey_id
         except (KeyError, IndexError):
-            raise SurveyIDSchemaPublishError(self.filepath) from None
+            raise SurveyIDError(self.filepath) from None
 
     def get_schema_version_from_json(self) -> str | None:
         """
@@ -35,4 +35,4 @@ class Schema:
             schema_version = self.json["properties"]["schema_version"]["const"]
             return schema_version
         except KeyError:
-            raise SchemaVersionSchemaPublishError(self.filepath) from None
+            raise SchemaVersionError(self.filepath) from None
