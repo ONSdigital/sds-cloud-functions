@@ -32,10 +32,7 @@ def publish_schema(cloud_event: CloudEvent) -> None:
 
         REQUEST_SERVICE.post_schema(schema)
     except SchemaPublishError as e:
-        if isinstance(e.__cause__, SchemaPublishError):
-            logger.error(
-                f"Error Type: {e.error_type}, Message: {e.message}, Filepath: {e.filepath}"
-            )
-            PUB_SUB_SERVICE.send_message(e, CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID)
-        else:
-            logger.error(e)
+        logger.error(
+            f"Error Type: {e.error_type}, Message: {e.message}, Filepath: {e.filepath}"
+        )
+        PUB_SUB_SERVICE.send_message(e, CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID)
