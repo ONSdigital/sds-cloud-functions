@@ -17,6 +17,14 @@ class Schema:
 
     @classmethod
     def set_schema(cls, schema_json: dict, filepath: str) -> Schema:
+        """
+        Sets the schema object with the survey ID and schema version from the schema JSON.
+        Parameters:
+            schema_json (dict): the schema JSON.
+            filepath (str): the path to the schema JSON.
+        Returns:
+            Schema: the schema object.
+        """
         try:
             survey_id = cls._get_survey_id_from_json(schema_json)
         except (KeyError, IndexError):

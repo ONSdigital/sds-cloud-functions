@@ -12,7 +12,7 @@ class SchemaValidatorService:
         """
         Validate the schema by verifying the version and checking for duplicate versions.
 
-        Args:
+        Parameters:
             schema (Schema): The schema object to validate.
         """
         self._verify_version(schema)
