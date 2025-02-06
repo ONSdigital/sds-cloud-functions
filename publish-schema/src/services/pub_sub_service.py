@@ -1,5 +1,3 @@
-import json
-
 from config.config import CONFIG
 from google.cloud.pubsub_v1 import PublisherClient
 from models.error_models import SchemaPublishError
@@ -20,7 +18,6 @@ class PubSubService:
         topic_path = self.publisher.topic_path(CONFIG.PROJECT_ID, topic_id)
         message_json = error.generate_message_content()
         self.publisher.publish(topic_path, data=message_json.encode("utf-8"))
-
 
 
 PUB_SUB_SERVICE = PubSubService()

@@ -4,8 +4,8 @@ import requests
 from config.config import CONFIG
 from config.logging_config import logging
 from models.error_models import (
-    SchemaJSONDecodeError,
     SchemaFetchError,
+    SchemaJSONDecodeError,
     SchemaMetadataError,
     SchemaPostError,
 )
@@ -86,7 +86,7 @@ class RequestService:
             decoded_response = response.json()
             return decoded_response
         except json.JSONDecodeError:
-            raise SchemaJSONDecodeError("N/A")
+            raise SchemaJSONDecodeError("N/A") from None
 
 
 REQUEST_SERVICE = RequestService()
