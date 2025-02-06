@@ -19,7 +19,7 @@ class RequestService:
     @staticmethod
     def get_schema_metadata(survey_id: str) -> requests.Response:
         """
-        Call the GET schema_metadata SDS endpoint and return the response for the survey.
+        Call the GET schema_metadata SDS endpoint and return the response.
 
         Parameters:
             survey_id (str): the survey_id of the schema.

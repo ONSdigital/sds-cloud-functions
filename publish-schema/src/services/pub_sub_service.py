@@ -11,10 +11,10 @@ class PubSubService:
 
     def send_message(self, error: SchemaPublishError, topic_id: str) -> None:
         """
-        Sends a Pub/Sub message to a specified topic.
+        Sends a Pub/Sub message to the specified topic.
 
         Parameters:
-            error (SchemaPublishError): The PubSubMessage object to send.
+            error (SchemaPublishError): The SchemaPublishError object containing message info to send.
             topic_id (str): The ID of the topic to send the message to.
         """
         topic_path = self.publisher.topic_path(CONFIG.PROJECT_ID, topic_id)
@@ -27,7 +27,7 @@ class PubSubService:
         Generates a JSON message to send to Pub/Sub from the relevant attributes of a schema object.
 
         Parameters:
-            error (SchemaPublishError): The error object to generate the message from.
+            error (SchemaPublishError): The SchemaPublishError object to generate the message from.
         Returns:
             str: The JSON message to send to Pub/Sub.
         """
