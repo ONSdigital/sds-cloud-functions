@@ -1,3 +1,4 @@
+import json
 from config.logging_config import logging
 
 logger = logging.getLogger(__name__)
@@ -9,6 +10,21 @@ class SchemaPublishError(Exception):
         self.message = message
         self.filepath = filepath
         self.error_message = f"Schema Publish Error - {self.error_type}: {self.message}. Filepath: {self.filepath}"
+
+    def generate_message_content(self) -> str:
+        """
+        Generates a JSON formatted string message.
+
+        Returns:
+            str: The JSON formatted string message.
+        """
+        return json.dumps(
+            {
+                "error_type": self.error_type,
+                "message": self.message,
+                "filepath": self.filepath,
+            }
+        )
 
 
 class FilepathError(SchemaPublishError):
