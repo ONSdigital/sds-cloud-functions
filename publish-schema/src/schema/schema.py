@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from models.error_models import (
     SchemaVersionError,
     SurveyIDError,
@@ -5,34 +7,42 @@ from models.error_models import (
 
 
 class Schema:
-    def __init__(self, schema_json: dict, filepath: str) -> None:
+    def __init__(
+        self, schema_json: dict, filepath: str, survey_id: str, schema_version: str
+    ) -> None:
         self.json = schema_json
         self.filepath = filepath
-        self.survey_id = self.get_survey_id_from_json()
-        self.schema_version = self.get_schema_version_from_json()
+        self.survey_id = survey_id
+        self.schema_version = schema_version
 
-    def get_survey_id_from_json(self) -> str | None:
+    @classmethod
+    def set_schema(cls, schema_json: dict, filepath: str) -> Schema:
+        try:
+            survey_id = cls._get_survey_id_from_json(schema_json)
+        except (KeyError, IndexError):
+            raise SurveyIDError(filepath) from None
+
+        try:
+            schema_version = cls._get_schema_version_from_json(schema_json)
+        except KeyError:
+            raise SchemaVersionError(filepath) from None
+
+        return cls(schema_json, filepath, survey_id, schema_version)
+
+    @staticmethod
+    def _get_survey_id_from_json(schema_json: dict) -> str | None:
         """
         Fetches the survey ID from the schema JSON.
-
         Returns:
             str: the survey ID.
         """
-        try:
-            survey_id = self.json["properties"]["survey_id"]["enum"][0]
-            return survey_id
-        except (KeyError, IndexError):
-            raise SurveyIDError(self.filepath) from None
+        return schema_json["properties"]["survey_id"]["enum"][0]
 
-    def get_schema_version_from_json(self) -> str | None:
+    @staticmethod
+    def _get_schema_version_from_json(schema_json: dict) -> str | None:
         """
         Fetches the schema version from the schema JSON.
-
         Returns
             str: the schema version.
         """
-        try:
-            schema_version = self.json["properties"]["schema_version"]["const"]
-            return schema_version
-        except KeyError:
-            raise SchemaVersionError(self.filepath) from None
+        return schema_json["properties"]["schema_version"]["const"]
