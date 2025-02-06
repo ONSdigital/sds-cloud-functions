@@ -26,13 +26,11 @@ def publish_schema(cloud_event: CloudEvent) -> None:
     try:
         schema_json = REQUEST_SERVICE.fetch_raw_schema(filepath)
 
-        schema = Schema(schema_json, filepath)
+        schema = Schema.set_schema(schema_json, filepath)
 
         SCHEMA_VALIDATOR_SERVICE.validate_schema(schema)
 
         REQUEST_SERVICE.post_schema(schema)
     except SchemaPublishError as e:
-        logger.error(
-            f"Error Type: {e.error_type}, Message: {e.message}, Filepath: {e.filepath}"
-        )
+        logger.error(e.error_message)
         PUB_SUB_SERVICE.send_message(e, CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID)

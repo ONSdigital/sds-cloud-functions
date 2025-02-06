@@ -4,14 +4,11 @@ logger = logging.getLogger(__name__)
 
 
 class SchemaPublishError(Exception):
-    """
-    Base class for all error types - raises a RuntimeError to aid compatibility with GCP monitoring.
-    """
-
     def __init__(self, error_type: str, message: str, filepath: str):
         self.error_type = error_type
         self.message = message
         self.filepath = filepath
+        self.error_message = f"Schema Publish Error - {self.error_type}: {self.message}. Filepath: {self.filepath}"
 
 
 class FilepathError(SchemaPublishError):
