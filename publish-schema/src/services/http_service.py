@@ -9,9 +9,15 @@ logging = logging.getLogger(__name__)
 
 
 class HTTPService:
-    def __init__(self):
-        self.session = self._setup_session()
-        self.sds_headers = self._generate_headers()
+    def __init__(self, session: requests.Session, sds_headers: dict[str, str]):
+        self.session = session
+        self.sds_headers = sds_headers
+
+    @classmethod
+    def create(cls):
+        session = cls._setup_session()
+        sds_headers = cls._generate_headers()
+        return cls(session, sds_headers)
 
     @staticmethod
     def _setup_session() -> requests.Session:
@@ -82,4 +88,4 @@ class HTTPService:
         return response
 
 
-HTTP_SERVICE = HTTPService()
+HTTP_SERVICE = HTTPService.create()
