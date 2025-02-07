@@ -1,5 +1,5 @@
 from config.logging_config import logging
-from models.error_models import SchemaDuplicationError, SchemaVersionMismatchError
+from models.schema_publish_errors import SchemaDuplicationError, SchemaVersionMismatchError
 from schema.schema import Schema
 from services.request_service import REQUEST_SERVICE
 from utilities.utils import split_filename
@@ -15,6 +15,7 @@ class SchemaValidatorService:
         Parameters:
             schema (Schema): The schema object to validate.
         """
+        logger.info(f"Validating schema {schema.filepath}")
         self._verify_version(schema)
         self._check_duplicate_versions(schema)
 
@@ -26,7 +27,6 @@ class SchemaValidatorService:
         Parameters:
             schema (Schema): the schema object to be posted.
         """
-        logger.info(f"Verifying schema version for {schema.filepath}")
         trimmed_filename = split_filename(schema.filepath)
         if schema.schema_version != trimmed_filename:
             raise SchemaVersionMismatchError(schema.filepath)

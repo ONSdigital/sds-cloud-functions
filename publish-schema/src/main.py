@@ -4,7 +4,7 @@ import functions_framework
 from cloudevents.http import CloudEvent
 from config.config import CONFIG
 from config.logging_config import logging
-from models.error_models import SchemaPublishError
+from models.schema_publish_errors import SchemaPublishError
 from schema.schema import Schema
 from services.pub_sub_service import PUB_SUB_SERVICE
 from services.request_service import REQUEST_SERVICE

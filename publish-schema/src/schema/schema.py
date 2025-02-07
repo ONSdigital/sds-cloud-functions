@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from models.error_models import (
+from models.schema_publish_errors import (
     SchemaVersionError,
     SurveyIDError,
 )

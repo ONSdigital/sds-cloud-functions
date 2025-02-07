@@ -3,7 +3,7 @@ import json
 from config.config import CONFIG
 from google.api_core.exceptions import GoogleAPICallError, RetryError
 from google.cloud import secretmanager
-from models.error_models import SecretError, SecretKeyError
+from models.schema_publish_errors import SecretError, SecretKeyError
 
 
 class SecretService:

@@ -14,7 +14,7 @@ class SchemaPublishError(Exception):
 
     def generate_message_content(self) -> str:
         """
-        Generates a JSON formatted string message.
+        Generates a JSON formatted string message from the error.
 
         Returns:
             str: The JSON formatted string message.

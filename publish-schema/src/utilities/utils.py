@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from config.logging_config import logging
-from models.error_models import FilepathError
+from models.schema_publish_errors import FilepathError
 
 logger = logging.getLogger(__name__)
 

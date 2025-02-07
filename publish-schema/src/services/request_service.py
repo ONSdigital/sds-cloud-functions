@@ -3,7 +3,7 @@ import json
 import requests
 from config.config import CONFIG
 from config.logging_config import logging
-from models.error_models import (
+from models.schema_publish_errors import (
     SchemaFetchError,
     SchemaJSONDecodeError,
     SchemaMetadataError,
