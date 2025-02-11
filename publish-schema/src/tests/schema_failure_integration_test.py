@@ -9,7 +9,7 @@ from src.tests.helpers.integration_helpers import (
     poll_subscription
 )
 from src.tests.helpers.pub_sub_helper import PubSubHelper
-from src.tests.test_data.schema_test_data import test_schema_subscriber_id
+from src.tests.test_data.schema_test_data import test_schema_subscriber_id, test_schema_subscriber_id_2, test_schema_subscriber_id_3
 from src.tests.test_data.test_filepaths import success_filepath
 
 
@@ -21,8 +21,8 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         self.schema_error_pubsub_helper = PubSubHelper(CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID)
         self.schema_success_pubsub_helper = PubSubHelper(CONFIG.PUBLISH_SCHEMA_SUCCESS_TOPIC_ID)
         pubsub_setup(self.schema_queue_pubsub_helper, test_schema_subscriber_id)
-        pubsub_setup(self.schema_error_pubsub_helper, test_schema_subscriber_id)
-        pubsub_setup(self.schema_success_pubsub_helper, test_schema_subscriber_id)
+        pubsub_setup(self.schema_error_pubsub_helper, test_schema_subscriber_id_2)
+        pubsub_setup(self.schema_success_pubsub_helper, test_schema_subscriber_id_3)
         inject_wait_time(3)  # Inject wait time to allow resources properly set up
 
     @classmethod
