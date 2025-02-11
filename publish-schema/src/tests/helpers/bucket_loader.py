@@ -1,4 +1,4 @@
-from src.config.schema_config import CONFIG
+from app.config.schema_config import CONFIG
 from google.cloud import exceptions, storage
 
 

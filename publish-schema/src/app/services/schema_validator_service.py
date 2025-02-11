@@ -1,8 +1,8 @@
-from config.logging_config import logging
-from models.schema_publish_errors import SchemaDuplicationError, SchemaVersionMismatchError
-from schema.schema import Schema
-from services.request_service import REQUEST_SERVICE
-from utilities.utils import split_filename
+from app.config.logging_config import logging
+from app.models.schema_publish_errors import SchemaDuplicationError, SchemaVersionMismatchError
+from app.schema.schema import Schema
+from app.services.request_service import REQUEST_SERVICE
+from app.utilities.utils import split_filename
 
 logger = logging.getLogger(__name__)
 

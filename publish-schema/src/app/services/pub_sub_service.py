@@ -1,6 +1,6 @@
-from config.schema_config import CONFIG
+from app.config.schema_config import CONFIG
 from google.cloud.pubsub_v1 import PublisherClient
-from models.schema_publish_errors import SchemaPublishError
+from app.models.schema_publish_errors import SchemaPublishError
 
 
 class PubSubService:
