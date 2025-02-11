@@ -1,4 +1,4 @@
-from config.config_helpers import get_value_from_env
+from src.config.config_helpers import get_value_from_env
 
 
 class SchemaConfig:
