@@ -42,7 +42,7 @@ steps:
       - -c
       - |
         python -m pip install --upgrade pip
-        python -m pip install -r src/requirements.txt
+        python -m pip install -r publish-schema/src/requirements.txt
 
   - name: python:3.11
     id: "Run integration tests"
