@@ -84,7 +84,7 @@ def is_json_response(response):
         return False
 
 
-def poll_subscription(pubsub_helper, subscriber_id, timeout=45) -> dict | None:
+def poll_subscription(pubsub_helper, subscriber_id, timeout=45) -> list[dict] | None:
     """
     Polls a subscription for messages until the timeout is reached.
     """
