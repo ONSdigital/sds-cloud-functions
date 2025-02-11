@@ -2,7 +2,7 @@ import base64
 
 import functions_framework
 from cloudevents.http import CloudEvent
-from config.config import CONFIG
+from config.schema_config import CONFIG
 from config.logging_config import logging
 from models.schema_publish_errors import SchemaPublishError
 from schema.schema import Schema

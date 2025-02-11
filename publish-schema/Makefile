@@ -1,6 +1,7 @@
 
-run-integration-tests:
-    export PYTHONPATH=${PYTHONPATH} && \
+
+integration-test:
+	export PYTHONPATH=${PYTHONPATH} && \
     export CONF=int-test && \
     export PROJECT_ID=${PROJECT_ID} && \
     export SDS_URL=${SDS_URL} && \
@@ -13,4 +14,4 @@ run-integration-tests:
     export PUBLISH_SCHEMA_QUEUE_TOPIC_ID=${PUBLISH_SCHEMA_QUEUE_TOPIC_ID} && \
     export FIRESTORE_DB_NAME=${FIRESTORE_DB_NAME} && \
     export SCHEMA_BUCKET_NAME=${SCHEMA_BUCKET_NAME} && \
-    python -m pytest --order-scope=module src/integration_tests -vv -W ignore::DeprecationWarning
+	python -m pytest src/tests -vv -W ignore::DeprecationWarning

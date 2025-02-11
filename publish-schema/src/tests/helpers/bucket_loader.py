@@ -1,11 +1,10 @@
-import exception.exceptions as exception
-from config.config_factory import config
+from src.config.schema_config import CONFIG
 from google.cloud import exceptions, storage
 
 
 class BucketLoader:
     def __init__(self):
-        self.schema_bucket = self._initialise_bucket(config.SCHEMA_BUCKET_NAME)
+        self.schema_bucket = self._initialise_bucket(CONFIG.SCHEMA_BUCKET_NAME)
 
     def get_schema_bucket(self) -> storage.Bucket:
         """
@@ -22,13 +21,13 @@ class BucketLoader:
         Parameters:
         bucket_name (str): The bucket name
         """
-        __storage_client = storage.Client(project=config.PROJECT_ID)
+        __storage_client = storage.Client(project=CONFIG.PROJECT_ID)
         try:
             bucket = __storage_client.get_bucket(
                 bucket_name,
             )
         except exceptions.NotFound as exc:
-            raise exception.ExceptionBucketNotFound from exc
+            raise RuntimeError(f"Bucket {bucket_name} not found") from exc
 
         return bucket
 

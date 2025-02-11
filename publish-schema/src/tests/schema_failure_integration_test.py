@@ -1,6 +1,6 @@
 from unittest import TestCase
-from config.config import CONFIG
-from tests.helpers.integration_helpers import (
+from src.config.schema_config import CONFIG
+from src.tests.helpers.integration_helpers import (
     cleanup,
     pubsub_setup,
     pubsub_teardown,
@@ -8,9 +8,9 @@ from tests.helpers.integration_helpers import (
     inject_wait_time,
     poll_subscription
 )
-from tests.helpers.pub_sub_helper import PubSubHelper
-from tests.test_data.test_filepaths import success_filepath
-from tests.test_data.schema_test_data import test_schema_subscriber_id
+from src.tests.helpers.pub_sub_helper import PubSubHelper
+from src.tests.test_data.test_filepaths import success_filepath
+from src.tests.test_data.schema_test_data import test_schema_subscriber_id
 
 
 class SchemaPublishErrorIntegrationTest(TestCase):
@@ -36,10 +36,8 @@ class SchemaPublishErrorIntegrationTest(TestCase):
 
         * We drop a message containing the filepath to a valid schema onto the queue.
         * We wait for the message to be processed.
-        *
-        Returns
-        -------
-
+        * We poll the schema_success_topic to check if the schema was published.
+        * We assert that the schema was published successfully.
         """
         # publish the schema path to the queue topic
         self.schema_queue_pubsub_helper.publish_message(success_filepath)

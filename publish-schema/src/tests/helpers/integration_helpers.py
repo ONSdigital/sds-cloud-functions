@@ -2,17 +2,17 @@ import json
 import time
 
 from google.cloud import storage
-from tests.test_data.dataset_test_data import test_survey_id
 
-from tests.helpers.firebase_loader import firebase_loader
-from tests.helpers.bucket_loader import bucket_loader
-from tests.helpers.bucket_helpers import (
+from src.tests.helpers.firebase_loader import firebase_loader
+from src.tests.helpers.bucket_loader import bucket_loader
+from src.tests.helpers.bucket_helpers import (
     delete_blobs_with_test_survey_id,
 )
-from tests.helpers.firestore_helpers import (
+from src.tests.helpers.firestore_helpers import (
     perform_delete_on_collection_with_test_survey_id,
 )
-from tests.helpers.pub_sub_helper import PubSubHelper
+from src.tests.helpers.pub_sub_helper import PubSubHelper
+from src.tests.test_data.schema_test_data import test_survey_id
 
 storage_client = storage.Client()
 
@@ -22,7 +22,7 @@ def load_json(filepath: str) -> dict:
     Method to load json from a file.
 
     Parameters:
-        filepath: string specifiing the location of the file to be loaded.
+        filepath: string specifying the location of the file to be loaded.
 
     Returns:
         dict: the json object from the specified file.

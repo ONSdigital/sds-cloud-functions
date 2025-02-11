@@ -1,4 +1,4 @@
-from tests.helpers.bucket_loader import bucket_loader
+from src.tests.helpers.bucket_loader import bucket_loader
 
 
 def delete_blobs_with_test_survey_id(bucket, test_survey_id: str) -> None:

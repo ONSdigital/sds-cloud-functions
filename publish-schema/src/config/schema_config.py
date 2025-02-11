@@ -1,7 +1,7 @@
-from config.config_helpers import get_value_from_env
+from src.config.config_helpers import get_value_from_env
 
 
-class Config:
+class SchemaConfig:
     PROJECT_ID = get_value_from_env("PROJECT_ID", "ons-sds-jb")
     PROCESS_TIMEOUT = int(get_value_from_env("PROCESS_TIMEOUT", "540"))
     SDS_URL = get_value_from_env("SDS_URL", "test_url")
@@ -33,4 +33,4 @@ class Config:
     )
 
 
-CONFIG = Config()
+CONFIG = SchemaConfig()

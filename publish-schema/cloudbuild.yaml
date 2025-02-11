@@ -35,6 +35,25 @@ steps:
       - --source
       - "gs://$PROJECT_ID-europe-west2-cloudfunctions/${_FUNCTION_NAME}/${_FUNCTION_NAME}-source.zip"
 
+  - name: python:3.11
+    id: "Run integration tests"
+    entrypoint: sh
+    args:
+      - -c
+      - |
+        export PROJECT_ID=${PROJECT_ID} && \
+        export SDS_URL=${_SDS_URL} && \
+        export SECRET_ID=${_SECRET_ID} && \
+        export GITHUB_SCHEMA_URL=${_GITHUB_SCHEMA_URL} && \
+        export POST_SCHEMA_ENDPOINT=${_POST_SCHEMA_ENDPOINT} && \
+        export GET_SCHEMA_METADATA_ENDPOINT=${_GET_SCHEMA_METADATA_ENDPOINT} && \
+        export PUBLISH_SCHEMA_ERROR_TOPIC_ID=${_PUBLISH_SCHEMA_ERROR_TOPIC_ID} && \
+        export PUBLISH_SCHEMA_SUCCESS_TOPIC_ID=${_PUBLISH_SCHEMA_SUCCESS_TOPIC_ID} && \
+        export PUBLISH_SCHEMA_QUEUE_TOPIC_ID=${_PUBLISH_SCHEMA_QUEUE_TOPIC_ID} && \
+        export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME} && \
+        export SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME} && \
+        make run-integration-tests
+
 options:
   logging: CLOUD_LOGGING_ONLY
 images: [gcr.io/$PROJECT_ID/zip]
