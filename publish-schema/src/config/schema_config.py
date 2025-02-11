@@ -33,4 +33,4 @@ class SchemaConfig:
     )
 
 
-CONFIG = Config()
+CONFIG = SchemaConfig()
