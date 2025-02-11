@@ -36,13 +36,14 @@ steps:
       - "gs://$PROJECT_ID-europe-west2-cloudfunctions/${_FUNCTION_NAME}/${_FUNCTION_NAME}-source.zip"
 
   - name: python:3.11
-    id: "Install requirements"
-    entrypoint: sh
-    args:
-      - -c
-      - |
-        python -m pip install --upgrade pip
-        python -m pip install -r publish-schema/src/requirements.txt
+    id: "Upgrade pip"
+    entrypoint: "python"
+    args: ["-m", "pip", "install", "--upgrade", "pip", "--user"]
+
+  - name: python:3.11
+    id: "Install app requirements"
+    entrypoint: python
+    args: ["-m", "pip", "install", "-r", "publish-schema/src/requirements.txt", "--user"]
 
   - name: python:3.11
     id: "Run integration tests"
