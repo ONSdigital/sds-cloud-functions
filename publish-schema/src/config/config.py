@@ -22,6 +22,15 @@ class Config:
     PUBLISH_SCHEMA_SUCCESS_TOPIC_ID = get_value_from_env(
         "PUBLISH_SCHEMA_SUCCESS_TOPIC_ID", "publish-schema-success"
     )
+    PUBLISH_SCHEMA_QUEUE_TOPIC_ID = get_value_from_env(
+        "PUBLISH_SCHEMA_QUEUE_TOPIC_ID", "publish-schema-queue"
+    )
+    FIRESTORE_DB_NAME = get_value_from_env(
+        "FIRESTORE_DB_NAME", "ons-sds-jb-sds"
+    )
+    SCHEMA_BUCKET_NAME = get_value_from_env(
+        "SCHEMA_BUCKET_NAME", "ons-sds-jb-sds-europe-west2-schema"
+    )
 
 
 CONFIG = Config()

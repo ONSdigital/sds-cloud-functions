@@ -10,7 +10,7 @@ class SchemaPublishError(Exception):
         self.error_type = error_type
         self.message = message
         self.filepath = filepath
-        self.error_message = f"Schema Publish Error - {self.error_type}: {self.message}. Filepath: {self.filepath}"
+        self.error_message = f"Schema Publish Error - {self.error_type}: {self.message} Filepath: {self.filepath}"
 
     def generate_message_content(self) -> str:
         """
@@ -70,8 +70,8 @@ class SchemaVersionError(SchemaPublishError):
 
 class SchemaJSONDecodeError(SchemaPublishError):
     def __init__(self, filepath: str):
-        self.error_type = "JSONDecodeError"
-        self.message = "Failed to decode JSON response."
+        self.error_type = "SchemaJSONDecodeError"
+        self.message = "Failed to decode the downloaded schema as JSON."
         self.filepath = filepath
         super().__init__(self.error_type, self.message, filepath)
 
@@ -84,25 +84,25 @@ class SchemaFetchError(SchemaPublishError):
         super().__init__(self.error_type, self.message, filepath)
 
 
-class SchemaPostError(SchemaPublishError):
-    def __init__(self, filepath: str):
+class SchemaPostError(SchemaPublishError, ):
+    def __init__(self, filepath: str, status_code: int):
         self.error_type = "SchemaPostError"
-        self.message = "Failed to post schema."
+        self.message = "Failed to post schema. Status code: {status_code}"
         self.filepath = filepath
         super().__init__(self.error_type, self.message, filepath)
 
 
 class SchemaMetadataError(SchemaPublishError):
-    def __init__(self, survey_id: str):
+    def __init__(self, survey_id: str, status_code: int):
         self.error_type = "SchemaMetadataError"
-        self.message = f"Failed to fetch schema metadata for survey {survey_id}."
+        self.message = f"Failed to fetch schema metadata for survey {survey_id}. Status code: {status_code}"
         self.filepath = "N/A"
         super().__init__(self.error_type, self.message, self.filepath)
 
 
-class SecretError(SchemaPublishError):
+class SecretAccessError(SchemaPublishError):
     def __init__(self, filepath: str):
-        self.error_type = "SecretError"
+        self.error_type = "SecretAccessError"
         self.message = (
             "Failed to access secret version from Google Cloud Secret Manager."
         )

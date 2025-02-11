@@ -1,0 +1,16 @@
+
+run-integration-tests:
+    export PYTHONPATH=${PYTHONPATH} && \
+    export CONF=int-test && \
+    export PROJECT_ID=${PROJECT_ID} && \
+    export SDS_URL=${SDS_URL} && \
+    export SECRET_ID=${SECRET_ID} && \
+    export GITHUB_SCHEMA_URL=${GITHUB_SCHEMA_URL} && \
+    export POST_SCHEMA_ENDPOINT=${POST_SCHEMA_ENDPOINT} && \
+    export GET_SCHEMA_METADATA_ENDPOINT=${GET_SCHEMA_METADATA_ENDPOINT} && \
+    export PUBLISH_SCHEMA_ERROR_TOPIC_ID=${PUBLISH_SCHEMA_ERROR_TOPIC_ID} && \
+    export PUBLISH_SCHEMA_SUCCESS_TOPIC_ID=${PUBLISH_SCHEMA_SUCCESS_TOPIC_ID} && \
+    export PUBLISH_SCHEMA_QUEUE_TOPIC_ID=${PUBLISH_SCHEMA_QUEUE_TOPIC_ID} && \
+    export FIRESTORE_DB_NAME=${FIRESTORE_DB_NAME} && \
+    export SCHEMA_BUCKET_NAME=${SCHEMA_BUCKET_NAME} && \
+    python -m pytest --order-scope=module src/integration_tests -vv -W ignore::DeprecationWarning
