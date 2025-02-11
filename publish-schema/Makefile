@@ -1,3 +1,4 @@
+.PHONY:integration-test
 integration-test:
 	export PYTHONPATH=${PYTHONPATH} && \
 	export CONF=int-test && \
