@@ -121,7 +121,7 @@ class PubSubHelper:
         Parameters:
         received_message: The message received from the topic.
         """
-        logger.info(received_message)
+        logger.debug(received_message)
         return json.loads(
             received_message.message.data.decode("utf-8").replace("'", '"')
         )
