@@ -24,8 +24,6 @@ class FirebaseLoader:
         """
         Connect to the firestore client using PROJECT_ID
         """
-        if CONFIG.CONF == "unit":
-            return None
         return firestore.Client(
             project=CONFIG.PROJECT_ID, database=CONFIG.FIRESTORE_DB_NAME
         )
@@ -34,8 +32,6 @@ class FirebaseLoader:
         """
         Setup the collection reference for schemas and datasets
         """
-        if CONFIG.CONF == "unit":
-            return None
         return self.client.collection(collection)
 
 
