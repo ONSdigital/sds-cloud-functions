@@ -75,6 +75,7 @@ class PubSubHelper:
         subscription_path = self.subscriber_client.subscription_path(
             CONFIG.PROJECT_ID, subscriber_id
         )
+        logger.debug(subscription_path)
         NUM_MESSAGES = 5
 
         response = self.subscriber_client.pull(
