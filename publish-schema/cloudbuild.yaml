@@ -35,7 +35,7 @@ steps:
       - --source
       - "gs://$PROJECT_ID-europe-west2-cloudfunctions/${_FUNCTION_NAME}/${_FUNCTION_NAME}-source.zip"
 
-  - name: python3.11
+  - name: python:3.11
     id: "Install requirements"
     entrypoint: sh
     args:
