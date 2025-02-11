@@ -18,15 +18,21 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         self.schema_queue_pubsub_helper = PubSubHelper(CONFIG.PUBLISH_SCHEMA_QUEUE_TOPIC_ID)
         self.schema_error_pubsub_helper = PubSubHelper(CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID)
         self.schema_success_pubsub_helper = PubSubHelper(CONFIG.PUBLISH_SCHEMA_SUCCESS_TOPIC_ID)
-        pubsub_setup(self.schema_pubsub_helper, test_schema_subscriber_id)
+        pubsub_setup(self.schema_queue_pubsub_helper, test_schema_subscriber_id)
+        pubsub_setup(self.schema_error_pubsub_helper, test_schema_subscriber_id)
+        pubsub_setup(self.schema_success_pubsub_helper, test_schema_subscriber_id)
         inject_wait_time(3)  # Inject wait time to allow resources properly set up
 
     @classmethod
     def teardown_class(self) -> None:
         cleanup()
         inject_wait_time(3) # Inject wait time to allow all message to be processed
-        pubsub_purge_messages(self.schema_pubsub_helper, test_schema_subscriber_id)
-        pubsub_teardown(self.schema_pubsub_helper, test_schema_subscriber_id)
+        pubsub_purge_messages(self.schema_queue_pubsub_helper, test_schema_subscriber_id)
+        pubsub_purge_messages(self.schema_error_pubsub_helper, test_schema_subscriber_id)
+        pubsub_purge_messages(self.schema_success_pubsub_helper, test_schema_subscriber_id)
+        pubsub_teardown(self.schema_queue_pubsub_helper, test_schema_subscriber_id)
+        pubsub_teardown(self.schema_error_pubsub_helper, test_schema_subscriber_id)
+        pubsub_teardown(self.schema_success_pubsub_helper, test_schema_subscriber_id)
 
     # def test_publish_schema_success(self):
     #     """
