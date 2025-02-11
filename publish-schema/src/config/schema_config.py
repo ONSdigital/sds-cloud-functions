@@ -1,4 +1,4 @@
-from app.config.config_helpers import get_value_from_env
+from config.config_helpers import get_value_from_env
 
 
 class SchemaConfig:
@@ -33,4 +33,4 @@ class SchemaConfig:
     )
 
 
-CONFIG = SchemaConfig()
+CONFIG = Config()

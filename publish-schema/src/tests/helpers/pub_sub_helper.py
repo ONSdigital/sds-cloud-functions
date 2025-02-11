@@ -1,7 +1,7 @@
 import json
 import time
 
-from app.config.schema_config import CONFIG
+from config.schema_config import CONFIG
 from google.cloud import pubsub_v1
 
 

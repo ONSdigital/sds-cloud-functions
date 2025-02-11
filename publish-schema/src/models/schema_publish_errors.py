@@ -1,6 +1,6 @@
 import json
 
-from app.config.logging_config import logging
+from config.logging_config import logging
 
 logger = logging.getLogger(__name__)
 

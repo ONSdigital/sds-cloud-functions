@@ -1,5 +1,5 @@
 from unittest import TestCase
-from app.config.schema_config import CONFIG
+from src.config.schema_config import CONFIG
 from src.tests.helpers.integration_helpers import (
     cleanup,
     pubsub_setup,

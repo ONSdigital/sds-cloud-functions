@@ -1,9 +1,9 @@
 import json
 
-from app.config.schema_config import CONFIG
+from config.schema_config import CONFIG
 from google.api_core.exceptions import GoogleAPICallError, RetryError
 from google.cloud import secretmanager
-from app.models.schema_publish_errors import SecretAccessError, SecretKeyError
+from models.schema_publish_errors import SecretAccessError, SecretKeyError
 
 
 class SecretService:

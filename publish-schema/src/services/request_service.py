@@ -1,16 +1,16 @@
 import json
 
 import requests
-from app.config.schema_config import CONFIG
-from app.config.logging_config import logging
-from app.models.schema_publish_errors import (
+from config.schema_config import CONFIG
+from config.logging_config import logging
+from models.schema_publish_errors import (
     SchemaFetchError,
     SchemaJSONDecodeError,
     SchemaMetadataError,
     SchemaPostError,
 )
-from app.schema.schema import Schema
-from app.services.http_service import HTTP_SERVICE
+from schema.schema import Schema
+from services.http_service import HTTP_SERVICE
 
 logger = logging.getLogger(__name__)
 
