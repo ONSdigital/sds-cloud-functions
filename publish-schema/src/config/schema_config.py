@@ -61,10 +61,7 @@ class SchemaConfig:
     PROCESS_TIMEOUT = int(ConfigHelpers.get_value_from_env("PROCESS_TIMEOUT", "540"))
     SDS_URL = ConfigHelpers.get_value_from_env("SDS_URL", "test_url")
     SECRET_ID = ConfigHelpers.get_value_from_env("SECRET_ID", "oauth-client-id")
-    GITHUB_SCHEMA_URL = ConfigHelpers.get_value_from_env(
-        "GITHUB_SCHEMA_URL",
-        "https://raw.githubusercontent.com/ONSdigital/sds-prototype-schema/refs/heads/SDSS-876-schema-automation-implementation/",
-    )
+    GITHUB_SCHEMA_URL = "https://raw.githubusercontent.com/ONSdigital/sds-prototype-schema/refs/heads/SDSS-876-schema-automation-implementation/"
     POST_SCHEMA_ENDPOINT = ConfigHelpers.get_value_from_env(
         "POST_SCHEMA_URL", "/v1/schema?survey_id="
     )
