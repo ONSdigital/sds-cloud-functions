@@ -11,4 +11,4 @@ python-dotenv==1.0.0
 functions-framework==3.5.0
 pip_audit==2.5.6
 setuptools==70.0.0
-pytest
+pytest==8.3.4
