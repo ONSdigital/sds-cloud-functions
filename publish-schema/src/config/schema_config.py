@@ -115,4 +115,4 @@ class IntegrationTestConfig:
         "SCHEMA_BUCKET_NAME", "ons-sds-jb-sds-europe-west2-schema"
     )
 
-CONFIG = SchemaConfig() if ConfigHelpers.get_value_from_env("CONF") is None else IntegrationTestConfig()
+CONFIG = IntegrationTestConfig() if ConfigHelpers.get_value_from_env("CONF") == "integration-test" else SchemaConfig()
