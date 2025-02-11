@@ -1,6 +1,6 @@
 from unittest import TestCase
-from config.schema_config import CONFIG
-from tests.helpers.integration_helpers import (
+from src.config.schema_config import CONFIG
+from src.tests.helpers.integration_helpers import (
     cleanup,
     pubsub_setup,
     pubsub_teardown,
@@ -8,9 +8,9 @@ from tests.helpers.integration_helpers import (
     inject_wait_time,
     poll_subscription
 )
-from tests.helpers.pub_sub_helper import PubSubHelper
-from tests.test_data.test_filepaths import success_filepath
-from tests.test_data.schema_test_data import test_schema_subscriber_id
+from src.tests.helpers.pub_sub_helper import PubSubHelper
+from src.tests.test_data.test_filepaths import success_filepath
+from src.tests.test_data.schema_test_data import test_schema_subscriber_id
 
 
 class SchemaPublishErrorIntegrationTest(TestCase):

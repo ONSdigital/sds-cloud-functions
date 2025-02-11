@@ -1,4 +1,4 @@
-from config.schema_config import CONFIG
+from src.config.schema_config import CONFIG
 from google.cloud import firestore
 
 

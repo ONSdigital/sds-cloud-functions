@@ -3,16 +3,16 @@ import time
 
 from google.cloud import storage
 
-from tests.helpers.firebase_loader import firebase_loader
-from tests.helpers.bucket_loader import bucket_loader
-from tests.helpers.bucket_helpers import (
+from src.tests.helpers.firebase_loader import firebase_loader
+from src.tests.helpers.bucket_loader import bucket_loader
+from src.tests.helpers.bucket_helpers import (
     delete_blobs_with_test_survey_id,
 )
-from tests.helpers.firestore_helpers import (
+from src.tests.helpers.firestore_helpers import (
     perform_delete_on_collection_with_test_survey_id,
 )
-from tests.helpers.pub_sub_helper import PubSubHelper
-from tests.test_data.schema_test_data import test_survey_id
+from src.tests.helpers.pub_sub_helper import PubSubHelper
+from src.tests.test_data.schema_test_data import test_survey_id
 
 storage_client = storage.Client()
 
