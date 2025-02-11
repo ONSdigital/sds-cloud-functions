@@ -7,10 +7,25 @@ class FirebaseLoader:
         self.client = self._connect_client()
         self.schemas_collection = self._set_collection("schemas")
 
+    def get_client(self) -> firestore.Client:
+        """
+        Get the firestore client
+        """
+        return self.client
+
+    def get_schemas_collection(self) -> firestore.CollectionReference:
+        """
+        Get the schemas collection from firestore
+        """
+        return self.schemas_collection
+
+
     def _connect_client(self) -> firestore.Client:
         """
         Connect to the firestore client using PROJECT_ID
         """
+        if CONFIG.CONF == "unit":
+            return None
         return firestore.Client(
             project=CONFIG.PROJECT_ID, database=CONFIG.FIRESTORE_DB_NAME
         )
@@ -19,6 +34,8 @@ class FirebaseLoader:
         """
         Setup the collection reference for schemas and datasets
         """
+        if CONFIG.CONF == "unit":
+            return None
         return self.client.collection(collection)
 
 
