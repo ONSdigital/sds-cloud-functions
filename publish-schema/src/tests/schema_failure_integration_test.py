@@ -9,7 +9,7 @@ from src.tests.helpers.integration_helpers import (
     poll_subscription
 )
 from src.tests.helpers.pub_sub_helper import PubSubHelper
-from src.tests.test_data.schema_test_data import test_schema_subscriber_id, test_schema_subscriber_id_2, test_schema_subscriber_id_3
+from src.tests.test_data.schema_test_data import test_schema_subscriber_id_success, test_schema_subscriber_id_fail, test_schema_subscriber_id_queue
 from src.tests.test_data.test_filepaths import success_filepath
 
 
@@ -20,21 +20,21 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         self.schema_queue_pubsub_helper = PubSubHelper(CONFIG.PUBLISH_SCHEMA_QUEUE_TOPIC_ID)
         self.schema_error_pubsub_helper = PubSubHelper(CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID)
         self.schema_success_pubsub_helper = PubSubHelper(CONFIG.PUBLISH_SCHEMA_SUCCESS_TOPIC_ID)
-        pubsub_setup(self.schema_queue_pubsub_helper, test_schema_subscriber_id)
-        pubsub_setup(self.schema_error_pubsub_helper, test_schema_subscriber_id_2)
-        pubsub_setup(self.schema_success_pubsub_helper, test_schema_subscriber_id_3)
+        pubsub_setup(self.schema_queue_pubsub_helper, test_schema_subscriber_id_queue)
+        pubsub_setup(self.schema_error_pubsub_helper, test_schema_subscriber_id_fail)
+        pubsub_setup(self.schema_success_pubsub_helper, test_schema_subscriber_id_success)
         inject_wait_time(3)  # Inject wait time to allow resources properly set up
 
     @classmethod
     def teardown_class(self) -> None:
         cleanup()
         inject_wait_time(3) # Inject wait time to allow all message to be processed
-        pubsub_purge_messages(self.schema_queue_pubsub_helper, test_schema_subscriber_id)
-        pubsub_purge_messages(self.schema_error_pubsub_helper, test_schema_subscriber_id)
-        pubsub_purge_messages(self.schema_success_pubsub_helper, test_schema_subscriber_id)
-        pubsub_teardown(self.schema_queue_pubsub_helper, test_schema_subscriber_id)
-        pubsub_teardown(self.schema_error_pubsub_helper, test_schema_subscriber_id)
-        pubsub_teardown(self.schema_success_pubsub_helper, test_schema_subscriber_id)
+        pubsub_purge_messages(self.schema_queue_pubsub_helper, test_schema_subscriber_id_queue)
+        pubsub_purge_messages(self.schema_error_pubsub_helper, test_schema_subscriber_id_fail)
+        pubsub_purge_messages(self.schema_success_pubsub_helper, test_schema_subscriber_id_success)
+        pubsub_teardown(self.schema_queue_pubsub_helper, test_schema_subscriber_id_queue)
+        pubsub_teardown(self.schema_error_pubsub_helper, test_schema_subscriber_id_fail)
+        pubsub_teardown(self.schema_success_pubsub_helper, test_schema_subscriber_id_success)
 
     def test_publish_schema_success(self):
         """
@@ -48,7 +48,7 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         # publish the schema path to the queue topic
         self.schema_queue_pubsub_helper.publish_message(success_filepath)
 
-        messages = poll_subscription(self.schema_success_pubsub_helper, test_schema_subscriber_id)
+        messages = poll_subscription(self.schema_success_pubsub_helper, test_schema_subscriber_id_success)
 
         # assert that the message was processed
         assert messages is not None
