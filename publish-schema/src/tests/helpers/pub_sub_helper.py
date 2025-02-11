@@ -2,7 +2,10 @@ import json
 import time
 
 from src.config.schema_config import CONFIG
+from src.config.logging_config import logging
 from google.cloud import pubsub_v1
+
+logger = logging.getLogger(__name__)
 
 
 class PubSubHelper:
@@ -118,6 +121,7 @@ class PubSubHelper:
         Parameters:
         received_message: The message received from the topic.
         """
+        logger.info(received_message)
         return json.loads(
             received_message.message.data.decode("utf-8").replace("'", '"')
         )
