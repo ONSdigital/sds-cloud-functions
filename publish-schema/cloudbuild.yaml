@@ -61,6 +61,7 @@ steps:
         export PUBLISH_SCHEMA_QUEUE_TOPIC_ID=${_PUBLISH_SCHEMA_QUEUE_TOPIC_ID}
         export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
         export SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME}
+        cd publish-schema
         make integration-test
 
 options:
