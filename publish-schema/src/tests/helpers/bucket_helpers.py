@@ -16,7 +16,3 @@ def delete_blobs_with_test_survey_id(bucket, test_survey_id: str) -> None:
 
     for blob in blobs:
         blob.delete()
-
-
-def get_dataset_bucket():
-    return bucket_loader.get_dataset_bucket()

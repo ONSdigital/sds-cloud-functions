@@ -11,16 +11,6 @@ class PubSubHelper:
         self.publisher_client = pubsub_v1.PublisherClient()
         self.topic_id = topic_id
 
-    def _topic_exists(self, topic_path: str) -> bool:
-        """
-        Returns True if the topic exists otherwise returns False.
-        """
-        try:
-            self.publisher_client.get_topic(request={"topic": topic_path})
-            return True
-        except Exception:
-            return False
-
     def try_create_subscriber(self, subscriber_id: str, attempts: int = 5) -> None:
         """
         Creates a subscriber with a unique subscriber id if one does not already exist.

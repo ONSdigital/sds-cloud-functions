@@ -16,20 +16,6 @@ from src.tests.test_data.schema_test_data import test_survey_id
 storage_client = storage.Client()
 
 
-def load_json(filepath: str) -> dict:
-    """
-    Method to load json from a file.
-
-    Parameters:
-        filepath: string specifying the location of the file to be loaded.
-
-    Returns:
-        dict: the json object from the specified file.
-    """
-    with open(filepath) as f:
-        return json.load(f)
-
-
 def cleanup() -> None:
     """
     Method to clean up all schema test data created in buckets/FireStore.
@@ -71,14 +57,6 @@ def inject_wait_time(seconds: int) -> None:
         None
     """
     time.sleep(seconds)
-
-
-def is_json_response(response):
-    try:
-        response.json()
-        return True
-    except Exception:
-        return False
 
 
 def poll_subscription(pubsub_helper, subscriber_id, timeout=45) -> list[dict] | None:
