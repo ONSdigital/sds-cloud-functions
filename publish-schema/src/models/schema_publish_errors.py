@@ -84,7 +84,9 @@ class SchemaFetchError(SchemaPublishError):
         super().__init__(self.error_type, self.message, filepath)
 
 
-class SchemaPostError(SchemaPublishError, ):
+class SchemaPostError(
+    SchemaPublishError,
+):
     def __init__(self, filepath: str, status_code: int):
         self.error_type = "SchemaPostError"
         self.message = "Failed to post schema. Status code: {status_code}"

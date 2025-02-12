@@ -1,27 +1,28 @@
 from unittest import TestCase
+
 import pytest
 from src.config.schema_config import CONFIG
 from src.tests.helpers.integration_helpers import (
     cleanup,
+    inject_wait_time,
+    poll_subscription,
+    pubsub_purge_messages,
     pubsub_setup,
     pubsub_teardown,
-    pubsub_purge_messages,
-    inject_wait_time,
-    poll_subscription
 )
 from src.tests.helpers.pub_sub_helper import PubSubHelper
 from src.tests.test_data.schema_test_data import (
-    test_schema_subscriber_id_success,
     test_schema_subscriber_id_fail,
-    test_schema_subscriber_id_queue
+    test_schema_subscriber_id_queue,
+    test_schema_subscriber_id_success,
 )
 from src.tests.test_data.test_filepaths import (
+    test_schema_fetch_error_filepath,
+    test_schema_json_decode_error_filepath,
     test_schema_success_filepath,
-    test_schema_version_mismatch_filepath,
     test_schema_survey_id_error_filepath,
     test_schema_version_error_filepath,
-    test_schema_json_decode_error_filepath,
-    test_schema_fetch_error_filepath
+    test_schema_version_mismatch_filepath,
 )
 
 
@@ -29,24 +30,40 @@ class SchemaPublishErrorIntegrationTest(TestCase):
     @classmethod
     def setup_class(cls):
         cleanup()
-        cls.schema_queue_pubsub_helper = PubSubHelper(CONFIG.PUBLISH_SCHEMA_QUEUE_TOPIC_ID)
-        cls.schema_error_pubsub_helper = PubSubHelper(CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID)
-        cls.schema_success_pubsub_helper = PubSubHelper(CONFIG.PUBLISH_SCHEMA_SUCCESS_TOPIC_ID)
+        cls.schema_queue_pubsub_helper = PubSubHelper(
+            CONFIG.PUBLISH_SCHEMA_QUEUE_TOPIC_ID
+        )
+        cls.schema_error_pubsub_helper = PubSubHelper(
+            CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID
+        )
+        cls.schema_success_pubsub_helper = PubSubHelper(
+            CONFIG.PUBLISH_SCHEMA_SUCCESS_TOPIC_ID
+        )
         pubsub_setup(cls.schema_queue_pubsub_helper, test_schema_subscriber_id_queue)
         pubsub_setup(cls.schema_error_pubsub_helper, test_schema_subscriber_id_fail)
-        pubsub_setup(cls.schema_success_pubsub_helper, test_schema_subscriber_id_success)
+        pubsub_setup(
+            cls.schema_success_pubsub_helper, test_schema_subscriber_id_success
+        )
         inject_wait_time(3)  # Inject wait time to allow resources properly set up
 
     @classmethod
     def teardown_class(cls) -> None:
         cleanup()
-        inject_wait_time(3) # Inject wait time to allow all message to be processed
-        pubsub_purge_messages(cls.schema_queue_pubsub_helper, test_schema_subscriber_id_queue)
-        pubsub_purge_messages(cls.schema_error_pubsub_helper, test_schema_subscriber_id_fail)
-        pubsub_purge_messages(cls.schema_success_pubsub_helper, test_schema_subscriber_id_success)
+        inject_wait_time(3)  # Inject wait time to allow all message to be processed
+        pubsub_purge_messages(
+            cls.schema_queue_pubsub_helper, test_schema_subscriber_id_queue
+        )
+        pubsub_purge_messages(
+            cls.schema_error_pubsub_helper, test_schema_subscriber_id_fail
+        )
+        pubsub_purge_messages(
+            cls.schema_success_pubsub_helper, test_schema_subscriber_id_success
+        )
         pubsub_teardown(cls.schema_queue_pubsub_helper, test_schema_subscriber_id_queue)
         pubsub_teardown(cls.schema_error_pubsub_helper, test_schema_subscriber_id_fail)
-        pubsub_teardown(cls.schema_success_pubsub_helper, test_schema_subscriber_id_success)
+        pubsub_teardown(
+            cls.schema_success_pubsub_helper, test_schema_subscriber_id_success
+        )
 
     @pytest.mark.order(1)
     def test_publish_schema_success(self):
@@ -60,7 +77,9 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         # publish the schema path to the queue topic
         self.schema_queue_pubsub_helper.publish_message(test_schema_success_filepath)
 
-        messages = poll_subscription(self.schema_success_pubsub_helper, test_schema_subscriber_id_success)
+        messages = poll_subscription(
+            self.schema_success_pubsub_helper, test_schema_subscriber_id_success
+        )
 
         # assert that the message was processed
         assert messages is not None
@@ -80,7 +99,9 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         # publish the schema path to the queue topic
         self.schema_queue_pubsub_helper.publish_message(test_schema_success_filepath)
 
-        messages = poll_subscription(self.schema_error_pubsub_helper, test_schema_subscriber_id_fail)
+        messages = poll_subscription(
+            self.schema_error_pubsub_helper, test_schema_subscriber_id_fail
+        )
 
         # assert that the message was processed
         assert messages is not None
@@ -99,9 +120,13 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         * We assert that the error is SchemaVersionMismatchError.
         """
         # publish the schema path to the queue topic
-        self.schema_queue_pubsub_helper.publish_message(test_schema_version_mismatch_filepath)
+        self.schema_queue_pubsub_helper.publish_message(
+            test_schema_version_mismatch_filepath
+        )
 
-        messages = poll_subscription(self.schema_error_pubsub_helper, test_schema_subscriber_id_fail)
+        messages = poll_subscription(
+            self.schema_error_pubsub_helper, test_schema_subscriber_id_fail
+        )
 
         # assert that the message was processed
         assert messages is not None
@@ -120,9 +145,13 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         * We assert that the error is SurveyIDError.
         """
         # publish the schema path to the queue topic
-        self.schema_queue_pubsub_helper.publish_message(test_schema_survey_id_error_filepath)
+        self.schema_queue_pubsub_helper.publish_message(
+            test_schema_survey_id_error_filepath
+        )
 
-        messages = poll_subscription(self.schema_error_pubsub_helper, test_schema_subscriber_id_fail)
+        messages = poll_subscription(
+            self.schema_error_pubsub_helper, test_schema_subscriber_id_fail
+        )
 
         # assert that the message was processed
         assert messages is not None
@@ -141,9 +170,13 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         * We assert that the error is SchemaVersionError.
         """
         # publish the schema path to the queue topic
-        self.schema_queue_pubsub_helper.publish_message(test_schema_version_error_filepath)
+        self.schema_queue_pubsub_helper.publish_message(
+            test_schema_version_error_filepath
+        )
 
-        messages = poll_subscription(self.schema_error_pubsub_helper, test_schema_subscriber_id_fail)
+        messages = poll_subscription(
+            self.schema_error_pubsub_helper, test_schema_subscriber_id_fail
+        )
 
         # assert that the message was processed
         assert messages is not None
@@ -162,9 +195,13 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         * We assert that the error is SchemaJSONDecodeError.
         """
         # publish the schema path to the queue topic
-        self.schema_queue_pubsub_helper.publish_message(test_schema_json_decode_error_filepath)
+        self.schema_queue_pubsub_helper.publish_message(
+            test_schema_json_decode_error_filepath
+        )
 
-        messages = poll_subscription(self.schema_error_pubsub_helper, test_schema_subscriber_id_fail)
+        messages = poll_subscription(
+            self.schema_error_pubsub_helper, test_schema_subscriber_id_fail
+        )
 
         # assert that the message was processed
         assert messages is not None
@@ -183,9 +220,13 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         * We assert that the error is SchemaFetchError.
         """
         # publish the schema path to the queue topic
-        self.schema_queue_pubsub_helper.publish_message(test_schema_fetch_error_filepath)
+        self.schema_queue_pubsub_helper.publish_message(
+            test_schema_fetch_error_filepath
+        )
 
-        messages = poll_subscription(self.schema_error_pubsub_helper, test_schema_subscriber_id_fail)
+        messages = poll_subscription(
+            self.schema_error_pubsub_helper, test_schema_subscriber_id_fail
+        )
 
         # assert that the message was processed
         assert messages is not None

@@ -1,5 +1,8 @@
 from config.logging_config import logging
-from models.schema_publish_errors import SchemaDuplicationError, SchemaVersionMismatchError
+from models.schema_publish_errors import (
+    SchemaDuplicationError,
+    SchemaVersionMismatchError,
+)
 from schema.schema import Schema
 from services.request_service import REQUEST_SERVICE
 from utilities.utils import split_filename

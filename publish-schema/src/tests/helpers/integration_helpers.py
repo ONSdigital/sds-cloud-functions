@@ -2,12 +2,11 @@ import json
 import time
 
 from google.cloud import storage
-
-from src.tests.helpers.firebase_loader import firebase_loader
-from src.tests.helpers.bucket_loader import bucket_loader
 from src.tests.helpers.bucket_helpers import (
     delete_blobs_with_test_survey_id,
 )
+from src.tests.helpers.bucket_loader import bucket_loader
+from src.tests.helpers.firebase_loader import firebase_loader
 from src.tests.helpers.firestore_helpers import (
     perform_delete_on_collection_with_test_survey_id,
 )
@@ -42,9 +41,7 @@ def cleanup() -> None:
     client = firebase_loader.get_client()
 
     perform_delete_on_collection_with_test_survey_id(
-        client,
-        firebase_loader.get_schemas_collection(),
-        test_survey_id
+        client, firebase_loader.get_schemas_collection(), test_survey_id
     )
 
 

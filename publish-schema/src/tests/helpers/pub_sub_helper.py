@@ -1,8 +1,8 @@
 import json
 import time
 
-from src.config.schema_config import CONFIG
 from google.cloud import pubsub_v1
+from src.config.schema_config import CONFIG
 
 
 class PubSubHelper:
@@ -161,10 +161,10 @@ class PubSubHelper:
             return False
 
     def _wait_and_check_subscription_exists(
-            self,
-            subscriber_id: str,
-            attempts: int = 5,
-            backoff: int = 0.5,
+        self,
+        subscriber_id: str,
+        attempts: int = 5,
+        backoff: int = 0.5,
     ) -> bool:
         """
         Waits for a subscription to be created and checks if it exists.
@@ -185,10 +185,10 @@ class PubSubHelper:
         return False
 
     def _wait_and_check_subscription_deleted(
-            self,
-            subscriber_id: str,
-            attempts: int = 5,
-            backoff: int = 0.5,
+        self,
+        subscriber_id: str,
+        attempts: int = 5,
+        backoff: int = 0.5,
     ) -> bool:
         """
         Waits for a subscription to be created and checks if it is deleted.

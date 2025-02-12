@@ -13,4 +13,4 @@ integration-test:
 	export PUBLISH_SCHEMA_QUEUE_TOPIC_ID=${PUBLISH_SCHEMA_QUEUE_TOPIC_ID} && \
 	export FIRESTORE_DB_NAME=${FIRESTORE_DB_NAME} && \
 	export SCHEMA_BUCKET_NAME=${SCHEMA_BUCKET_NAME} && \
-	python -m pytest src/tests -vv -W ignore::DeprecationWarning --log-cli-level=DEBUG
+	python -m pytest src/tests -vv -W ignore::DeprecationWarning

@@ -2,8 +2,8 @@ import base64
 
 import functions_framework
 from cloudevents.http import CloudEvent
-from config.schema_config import CONFIG
 from config.logging_config import logging
+from config.schema_config import CONFIG
 from models.schema_publish_errors import SchemaPublishError
 from schema.schema import Schema
 from services.pub_sub_service import PUB_SUB_SERVICE

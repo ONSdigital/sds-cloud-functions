@@ -1,5 +1,5 @@
-from src.config.schema_config import CONFIG
 from google.cloud import firestore
+from src.config.schema_config import CONFIG
 
 
 class FirebaseLoader:
@@ -18,7 +18,6 @@ class FirebaseLoader:
         Get the schemas collection from firestore
         """
         return self.schemas_collection
-
 
     def _connect_client(self) -> firestore.Client:
         """

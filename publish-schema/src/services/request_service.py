@@ -1,8 +1,8 @@
 import json
 
 import requests
-from config.schema_config import CONFIG
 from config.logging_config import logging
+from config.schema_config import CONFIG
 from models.schema_publish_errors import (
     SchemaFetchError,
     SchemaJSONDecodeError,

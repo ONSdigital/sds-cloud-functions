@@ -1,5 +1,5 @@
-from src.config.schema_config import CONFIG
 from google.cloud import exceptions, storage
+from src.config.schema_config import CONFIG
 
 
 class BucketLoader:
