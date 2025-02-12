@@ -129,7 +129,7 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         # assert that the first messages contains a guid in the json
         for message in messages:
             assert "error_type" in message
-            assert message["error_type"] == "SchemaIdError"
+            assert message["error_type"] == "SurveyIdError"
 
     @pytest.mark.order(4)
     def test_schema_version_error(self):
