@@ -39,7 +39,7 @@ class FilepathError(SchemaPublishError):
 class SchemaDuplicationError(SchemaPublishError):
     def __init__(self, filepath: str):
         self.error_type = "SchemaVersionError"
-        self.message = "Schema version already exists in SDS for new survey."
+        self.message = "Schema version already exists in SDS for new schema."
         self.filepath = filepath
         super().__init__(self.error_type, self.message, filepath)
 
