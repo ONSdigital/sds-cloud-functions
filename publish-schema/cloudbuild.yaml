@@ -53,7 +53,6 @@ steps:
       - |
         export PROJECT_ID=${PROJECT_ID}
         export SDS_URL=${_SDS_URL}
-        export CONF=integration-test
         export SECRET_ID=${_SECRET_ID}
         export GITHUB_SCHEMA_URL=${_GITHUB_SCHEMA_URL}
         export POST_SCHEMA_ENDPOINT=${_POST_SCHEMA_ENDPOINT}
