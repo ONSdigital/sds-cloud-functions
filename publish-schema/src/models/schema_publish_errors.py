@@ -46,7 +46,7 @@ class SchemaDuplicationError(SchemaPublishError):
 
 class SchemaVersionMismatchError(SchemaPublishError):
     def __init__(self, filepath: str):
-        self.error_type = "SchemaVersionError"
+        self.error_type = "SchemaVersionMismatchError"
         self.message = "Schema version does not match filename."
         self.filepath = filepath
         super().__init__(self.error_type, self.message, filepath)

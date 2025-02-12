@@ -2,10 +2,7 @@ import json
 import time
 
 from src.config.schema_config import CONFIG
-from src.config.logging_config import logging
 from google.cloud import pubsub_v1
-
-logger = logging.getLogger(__name__)
 
 
 class PubSubHelper:
@@ -75,7 +72,6 @@ class PubSubHelper:
         subscription_path = self.subscriber_client.subscription_path(
             CONFIG.PROJECT_ID, subscriber_id
         )
-        logger.debug(subscription_path)
         NUM_MESSAGES = 5
 
         response = self.subscriber_client.pull(
@@ -122,7 +118,6 @@ class PubSubHelper:
         Parameters:
         received_message: The message received from the topic.
         """
-        logger.debug(received_message)
         return json.loads(
             received_message.message.data.decode("utf-8").replace("'", '"')
         )

@@ -1,4 +1,5 @@
 from unittest import TestCase
+import pytest
 from src.config.schema_config import CONFIG
 from src.tests.helpers.integration_helpers import (
     cleanup,
@@ -47,6 +48,7 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         pubsub_teardown(cls.schema_error_pubsub_helper, test_schema_subscriber_id_fail)
         pubsub_teardown(cls.schema_success_pubsub_helper, test_schema_subscriber_id_success)
 
+    @pytest.mark.order(1)
     def test_publish_schema_success(self):
         """
         Test the publish-schema Cloud Function happy path.
@@ -66,6 +68,7 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         for message in messages:
             assert "guid" in message
 
+    @pytest.mark.order(2)
     def test_publish_schema_schema_duplication_error(self):
         """
         Test the publish-schema Cloud Function returns SchemaDuplicationError.
@@ -83,8 +86,10 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         assert messages is not None
         # assert that the first messages contains a guid in the json
         for message in messages:
-            assert "SchemaDuplicationError" in message
+            assert "error_type" in message
+            assert message["error_type"] == "SchemaDuplicationError"
 
+    @pytest.mark.order(3)
     def test_publish_schema_schema_version_mismatch_error(self):
         """
         Test the publish-schema Cloud Function returns SchemaVersionMismatchError.
@@ -102,8 +107,10 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         assert messages is not None
         # assert that the first messages contains a guid in the json
         for message in messages:
-            assert "SchemaVersionMismatchError" in message
+            assert "error_type" in message
+            assert message["error_type"] == "SchemaVersionMismatchError"
 
+    @pytest.mark.order(3)
     def test_publish_schema_survey_id_error(self):
         """
         Test the publish-schema Cloud Function returns SurveyIDError.
@@ -121,8 +128,10 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         assert messages is not None
         # assert that the first messages contains a guid in the json
         for message in messages:
-            assert "SurveyIDError" in message
+            assert "error_type" in message
+            assert message["error_type"] == "SchemaIDError"
 
+    @pytest.mark.order(4)
     def test_schema_version_error(self):
         """
         Test the publish-schema Cloud Function returns SchemaVersionError.
@@ -140,8 +149,10 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         assert messages is not None
         # assert that the first messages contains a guid in the json
         for message in messages:
-            assert "SchemaVersionError" in message
+            assert "error_type" in message
+            assert message["error_type"] == "SchemaVersionError"
 
+    @pytest.mark.order(5)
     def test_schema_json_decode_error(self):
         """
         Test the publish-schema Cloud Function returns SchemaJSONDecodeError.
@@ -159,8 +170,10 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         assert messages is not None
         # assert that the first messages contains a guid in the json
         for message in messages:
-            assert "SchemaJSONDecodeError" in message
+            assert "error_type" in message
+            assert message["error_type"] == "SchemaJSONDecodeError"
 
+    @pytest.mark.order(6)
     def test_schema_fetch_error(self):
         """
         Test the publish-schema Cloud Function returns SchemaFetchError.
@@ -178,4 +191,5 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         assert messages is not None
         # assert that the first messages contains a guid in the json
         for message in messages:
-            assert "SchemaFetchError" in message
+            assert "error_type" in message
+            assert message["error_type"] == "SchemaFetchError"
