@@ -13,7 +13,6 @@ from src.tests.helpers.integration_helpers import (
 from src.tests.helpers.pub_sub_helper import PubSubHelper
 from src.tests.test_data.schema_test_data import (
     test_schema_subscriber_id_fail,
-    test_schema_subscriber_id_queue,
     test_schema_subscriber_id_success,
 )
 from src.tests.test_data.test_filepaths import (
@@ -50,15 +49,11 @@ class SchemaPublishIntegrationTest(TestCase):
         cleanup()
         inject_wait_time(3)  # Inject wait time to allow all message to be processed
         pubsub_purge_messages(
-            cls.schema_queue_pubsub_helper, test_schema_subscriber_id_queue
-        )
-        pubsub_purge_messages(
             cls.schema_error_pubsub_helper, test_schema_subscriber_id_fail
         )
         pubsub_purge_messages(
             cls.schema_success_pubsub_helper, test_schema_subscriber_id_success
         )
-        pubsub_teardown(cls.schema_queue_pubsub_helper, test_schema_subscriber_id_queue)
         pubsub_teardown(cls.schema_error_pubsub_helper, test_schema_subscriber_id_fail)
         pubsub_teardown(
             cls.schema_success_pubsub_helper, test_schema_subscriber_id_success
