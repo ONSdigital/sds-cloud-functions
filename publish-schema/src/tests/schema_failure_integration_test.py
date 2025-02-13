@@ -26,7 +26,7 @@ from src.tests.test_data.test_filepaths import (
 )
 
 
-class SchemaPublishErrorIntegrationTest(TestCase):
+class SchemaPublishIntegrationTest(TestCase):
     @classmethod
     def setup_class(cls):
         cleanup()
@@ -39,7 +39,6 @@ class SchemaPublishErrorIntegrationTest(TestCase):
         cls.schema_success_pubsub_helper = PubSubHelper(
             CONFIG.PUBLISH_SCHEMA_SUCCESS_TOPIC_ID
         )
-        pubsub_setup(cls.schema_queue_pubsub_helper, test_schema_subscriber_id_queue)
         pubsub_setup(cls.schema_error_pubsub_helper, test_schema_subscriber_id_fail)
         pubsub_setup(
             cls.schema_success_pubsub_helper, test_schema_subscriber_id_success
