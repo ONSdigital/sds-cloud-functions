@@ -75,9 +75,7 @@ class SchemaPublishIntegrationTest(TestCase):
             self.schema_success_pubsub_helper, test_schema_subscriber_id_success
         )
 
-        # assert that the message was processed
         assert messages is not None
-        # assert that the first messages contains a guid in the json
         for message in messages:
             assert "guid" in message
 
@@ -97,9 +95,7 @@ class SchemaPublishIntegrationTest(TestCase):
             self.schema_error_pubsub_helper, test_schema_subscriber_id_fail
         )
 
-        # assert that the message was processed
         assert messages is not None
-        # assert that the first messages contains a guid in the json
         for message in messages:
             assert "error_type" in message
             assert message["error_type"] == "SchemaDuplicationError"
@@ -122,9 +118,7 @@ class SchemaPublishIntegrationTest(TestCase):
             self.schema_error_pubsub_helper, test_schema_subscriber_id_fail
         )
 
-        # assert that the message was processed
         assert messages is not None
-        # assert that the first messages contains a guid in the json
         for message in messages:
             assert "error_type" in message
             assert message["error_type"] == "SchemaVersionMismatchError"
@@ -147,9 +141,7 @@ class SchemaPublishIntegrationTest(TestCase):
             self.schema_error_pubsub_helper, test_schema_subscriber_id_fail
         )
 
-        # assert that the message was processed
         assert messages is not None
-        # assert that the first messages contains a guid in the json
         for message in messages:
             assert "error_type" in message
             assert message["error_type"] == "SurveyIdError"
@@ -172,9 +164,7 @@ class SchemaPublishIntegrationTest(TestCase):
             self.schema_error_pubsub_helper, test_schema_subscriber_id_fail
         )
 
-        # assert that the message was processed
         assert messages is not None
-        # assert that the first messages contains a guid in the json
         for message in messages:
             assert "error_type" in message
             assert message["error_type"] == "SchemaVersionError"
@@ -197,9 +187,7 @@ class SchemaPublishIntegrationTest(TestCase):
             self.schema_error_pubsub_helper, test_schema_subscriber_id_fail
         )
 
-        # assert that the message was processed
         assert messages is not None
-        # assert that the first messages contains a guid in the json
         for message in messages:
             assert "error_type" in message
             assert message["error_type"] == "SchemaJSONDecodeError"
@@ -222,9 +210,7 @@ class SchemaPublishIntegrationTest(TestCase):
             self.schema_error_pubsub_helper, test_schema_subscriber_id_fail
         )
 
-        # assert that the message was processed
         assert messages is not None
-        # assert that the first messages contains a guid in the json
         for message in messages:
             assert "error_type" in message
             assert message["error_type"] == "SchemaFetchError"
