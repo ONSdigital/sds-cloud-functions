@@ -1,9 +1,9 @@
 import json
 
-from config.config import CONFIG
+from config.schema_config import CONFIG
 from google.api_core.exceptions import GoogleAPICallError, RetryError
 from google.cloud import secretmanager
-from models.schema_publish_errors import SecretError, SecretKeyError
+from models.schema_publish_errors import SecretAccessError, SecretKeyError
 
 
 class SecretService:
@@ -40,7 +40,7 @@ class SecretService:
             response = self.client.access_secret_version(name=name)
             return response.payload.data.decode("UTF-8")
         except (GoogleAPICallError, RetryError):
-            raise SecretError("N/A") from None
+            raise SecretAccessError("N/A") from None
 
 
 SECRET_SERVICE = SecretService()

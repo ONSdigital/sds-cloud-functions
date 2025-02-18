@@ -1,0 +1,10 @@
+.PHONY:integration-test
+integration-test:
+	export PYTHONPATH=${PYTHONPATH} && \
+	export PROJECT_ID=${PROJECT_ID} && \
+	export PUBLISH_SCHEMA_ERROR_TOPIC_ID=${PUBLISH_SCHEMA_ERROR_TOPIC_ID} && \
+	export PUBLISH_SCHEMA_SUCCESS_TOPIC_ID=${PUBLISH_SCHEMA_SUCCESS_TOPIC_ID} && \
+	export PUBLISH_SCHEMA_QUEUE_TOPIC_ID=${PUBLISH_SCHEMA_QUEUE_TOPIC_ID} && \
+	export FIRESTORE_DB_NAME=${FIRESTORE_DB_NAME} && \
+	export SCHEMA_BUCKET_NAME=${SCHEMA_BUCKET_NAME} && \
+	python -m pytest src/tests -vv -W ignore::DeprecationWarning
