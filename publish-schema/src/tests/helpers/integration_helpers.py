@@ -68,5 +68,5 @@ def poll_subscription(pubsub_helper, subscriber_id, timeout=45) -> list[dict] | 
         response = pubsub_helper.pull_and_acknowledge_messages(subscriber_id)
         if response:
             return response
-        time.sleep(0.5)
+        time.sleep(3)
     return None
