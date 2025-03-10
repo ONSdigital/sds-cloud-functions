@@ -35,4 +35,3 @@ steps:
 
 options:
   logging: CLOUD_LOGGING_ONLY
-images: ['europe-west2-docker.pkg.dev/$PROJECT_ID/gcr/zip']
