@@ -2,13 +2,13 @@ import base64
 
 import functions_framework
 from cloudevents.http import CloudEvent
-from config.logging_config import logging
-from config.schema_config import CONFIG
-from models.schema_publish_errors import SchemaPublishError
-from schema.schema import Schema
-from services.pub_sub_service import PUB_SUB_SERVICE
-from services.request_service import REQUEST_SERVICE
-from services.schema_validator_service import SCHEMA_VALIDATOR_SERVICE
+from sds_common.config.logging_config import logging
+from sds_common.config.schema_config import CONFIG
+from sds_common.models.schema_publish_errors import SchemaPublishError
+from sds_common.schema.schema import Schema
+from sds_common.services.pub_sub_service import PUB_SUB_SERVICE
+from sds_common.services.request_service import REQUEST_SERVICE
+from sds_common.services.schema_validator_service import SCHEMA_VALIDATOR_SERVICE
 
 logger = logging.getLogger(__name__)
 
