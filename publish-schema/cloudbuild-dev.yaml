@@ -25,7 +25,7 @@ steps:
       - --ingress-settings
       - all
       - --runtime
-      - python311
+      - python313
       - --region
       - europe-west2
       - --entry-point
