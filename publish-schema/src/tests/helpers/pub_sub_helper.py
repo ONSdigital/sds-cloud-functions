@@ -2,7 +2,7 @@ import json
 import time
 
 from google.cloud import pubsub_v1
-from src.config.schema_config import CONFIG
+from sds_common.config.schema_config import CONFIG
 
 
 class PubSubHelper:

@@ -1,5 +1,5 @@
 from google.cloud import firestore
-from src.config.schema_config import CONFIG
+from sds_common.config.schema_config import CONFIG
 
 
 class FirebaseLoader:

@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 import pytest
-from src.config.schema_config import CONFIG
+from sds_common.config.schema_config import CONFIG
 from src.tests.helpers.integration_helpers import (
     cleanup,
     inject_wait_time,
