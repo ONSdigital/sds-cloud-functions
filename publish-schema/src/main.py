@@ -9,7 +9,7 @@ from sds_common.schema.schema import Schema
 from sds_common.services.pub_sub_service import PUB_SUB_SERVICE
 from sds_common.services.sds_schema_request_service import SDS_SCHEMA_REQUEST_SERVICE
 from sds_common.services.schema_validator_service import SCHEMA_VALIDATOR_SERVICE
-from sds_common.utilities.utils import fetch_raw_schema
+from sds_common.utilities.utils import fetch_raw_schema_from_github
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 @functions_framework.cloud_event
 def publish_schema(cloud_event: CloudEvent) -> None:
     """
-    Retrieve, verify, and publish a schema to SDS.
+    Retrieve, verify, and publish a schema to SDS; triggered by Pub/Sub message containing schema filepath on GitHub.
 
     Parameters:
         cloud_event (CloudEvent): the CloudEvent containing the Pub/Sub message.
@@ -25,7 +25,7 @@ def publish_schema(cloud_event: CloudEvent) -> None:
     filepath = base64.b64decode(cloud_event.data["message"]["data"]).decode("utf-8")
 
     try:
-        schema_json = fetch_raw_schema(filepath)
+        schema_json = fetch_raw_schema_from_github(filepath)
 
         schema = Schema.set_schema(schema_json, filepath)
 
