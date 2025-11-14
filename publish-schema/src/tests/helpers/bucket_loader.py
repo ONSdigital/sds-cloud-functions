@@ -1,5 +1,5 @@
 from google.cloud import exceptions, storage
-from sds_common.config.schema_config import CONFIG
+from sds_common.config.config import CONFIG
 
 
 class BucketLoader:

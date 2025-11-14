@@ -3,7 +3,7 @@ import base64
 import functions_framework
 from cloudevents.http import CloudEvent
 from sds_common.config.logging_config import logging
-from sds_common.config.schema_config import CONFIG
+from sds_common.config.config import CONFIG
 from sds_common.models.schema_publish_errors import SchemaPublishError
 from sds_common.schema.schema import Schema
 from sds_common.services.pub_sub_service import PUB_SUB_SERVICE
