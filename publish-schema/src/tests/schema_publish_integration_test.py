@@ -1,8 +1,8 @@
 from unittest import TestCase
 
 import pytest
-from sds_common.config.schema_config import CONFIG
-from src.tests.helpers.integration_helpers import (
+from sds_common.config.config import CONFIG
+from sds_common.test_helpers.integration_helpers import (
     cleanup,
     inject_wait_time,
     poll_subscription,
@@ -10,8 +10,8 @@ from src.tests.helpers.integration_helpers import (
     pubsub_setup,
     pubsub_teardown,
 )
-from src.tests.helpers.pub_sub_helper import PubSubHelper
-from src.tests.test_data.schema_test_data import (
+from sds_common.test_helpers.pub_sub_helper import PubSubHelper
+from sds_common.test_helpers.common_test_data import (
     test_schema_subscriber_id_fail,
     test_schema_subscriber_id_success,
 )
