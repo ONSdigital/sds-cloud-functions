@@ -55,7 +55,7 @@ class SchemaPublishGcsIntegrationTest(TestCase):
         *We assert that the schema was published successfully.
 
         """
-        self.bucket_service.upload_file_to_bucket("tests/test_data/test_schema_success.json")
+        self.bucket_service.upload_file_to_bucket("src/tests/test_data/test_schema_success.json")
 
         messages = poll_subscription(
             self.schema_success_pubsub_helper, test_schema_subscriber_id_success
