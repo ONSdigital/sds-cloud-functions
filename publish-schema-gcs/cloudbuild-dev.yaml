@@ -31,7 +31,7 @@ steps:
       - --entry-point
       - ${_ENTRY_POINT}
       - --trigger-bucket
-      - ${_SCHEMA_BUCKET_NAME}
+      - ${_SCHEMA_PUBLISH_BUCKET_NAME}
       - --source
       - "gs://$PROJECT_ID-europe-west2-cloudfunctions/${_FUNCTION_NAME}/${_FUNCTION_NAME}-source.zip"
 
