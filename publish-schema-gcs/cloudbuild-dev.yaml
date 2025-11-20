@@ -57,7 +57,7 @@ steps:
         export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
         export SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME}
         export SCHEMA_PUBLISH_BUCKET=${_SCHEMA_PUBLISH_BUCKET}
-        cd publish-schema
+        cd publish-schema-gcs
         make integration-test
 
 options:
