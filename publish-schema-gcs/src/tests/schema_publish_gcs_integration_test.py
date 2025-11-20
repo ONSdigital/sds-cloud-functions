@@ -1,3 +1,4 @@
+from unittest import TestCase
 import pytest
 from sds_common.config.config import CONFIG
 from sds_common.enums.buckets import Bucket
@@ -9,7 +10,7 @@ from sds_common.test_helpers.integration_helpers import cleanup, pubsub_setup, i
 from sds_common.test_helpers.pub_sub_helper import PubSubHelper
 
 
-class SchemaPublishGcsIntegrationTest:
+class SchemaPublishGcsIntegrationTest(TestCase):
     @classmethod
     def setup_class(cls):
         cleanup()
