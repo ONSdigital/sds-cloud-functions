@@ -56,7 +56,7 @@ steps:
         export PUBLISH_SCHEMA_SUCCESS_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID}
         export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
         export SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME}
-        export SCHEMA_PUBLISH_BUCKET=${_SCHEMA_PUBLISH_BUCKET}
+        export SCHEMA_PUBLISH_BUCKET=${_SCHEMA_PUBLISH_BUCKET_NAME}
         cd publish-schema-gcs
         make integration-test
 
