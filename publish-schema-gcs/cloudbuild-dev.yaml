@@ -5,7 +5,7 @@ steps:
 
   - name: gcr.io/$PROJECT_ID/zip
     args: [-r, /workspace/function.zip, .]
-    dir: publish-schema/src
+    dir: publish-schema-gcs/src
 
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     entrypoint: bash

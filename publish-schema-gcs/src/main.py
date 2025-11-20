@@ -21,18 +21,18 @@ def publish_schema_gcs(cloud_event: CloudEvent) -> None:
     bucket_name = cloud_event.data["bucket"]
     file_name = cloud_event.data["name"]
 
-    if not bucket_name == Bucket.SCHEMA_PUBLISH_BUCKET.value:
+    if bucket_name is not Bucket.SCHEMA_PUBLISH_BUCKET.value:
         logger.info(
             f"Bucket name is: {bucket_name} not schema publish bucket: {Bucket.SCHEMA_PUBLISH_BUCKET}, exiting function.")
         return None
 
     bucket_service = BucketService(Bucket.SCHEMA_PUBLISH_BUCKET, BucketLoader())
     schema_json = bucket_service.retrieve_json_file_from_bucket(file_name)
-    schema = Schema.set_schema(schema_json)
+    schema = Schema.set_schema(schema_json, file_name)
     response = SDS_SCHEMA_REQUEST_SERVICE.post_schema(schema)
 
     if response.status_code == 200:
-        logger.debug(f"Schema {file_name} published successfully, deleting schema file from bucket.")
+        logger.debug(f"Deleting schema file {file_name} from bucket.")
         bucket_service.delete_file_from_bucket(file_name)
 
     return None
