@@ -21,9 +21,10 @@ def publish_schema_gcs(cloud_event: CloudEvent) -> None:
     bucket_name = cloud_event.data["bucket"]
     file_name = cloud_event.data["name"]
 
-    if bucket_name is not Bucket.SCHEMA_PUBLISH_BUCKET.value:
+    if not bucket_name == Bucket.SCHEMA_PUBLISH_BUCKET.value:
         logger.info(
-            f"Bucket name is: {bucket_name} not schema publish bucket: {Bucket.SCHEMA_PUBLISH_BUCKET}, exiting function.")
+            f"Bucket name is: {bucket_name} not schema publish bucket. Exiting function."
+        )
         return None
 
     bucket_service = BucketService(Bucket.SCHEMA_PUBLISH_BUCKET, BucketLoader())
