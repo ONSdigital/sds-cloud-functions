@@ -19,7 +19,7 @@ def publish_schema_gcs(cloud_event: CloudEvent) -> None:
 
     try:
         publisher = GcsSchemaPublisher()
-        response = publisher.publish(file_name)
+        response = publisher.publish_schema(file_name)
         if response.status_code == 200:
             logger.debug(f"Deleting schema file {file_name} from bucket.")
             publisher.cleanup(file_name)
