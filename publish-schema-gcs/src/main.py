@@ -7,13 +7,13 @@ from sds_common.publishers.gcs_schema_publisher import GcsSchemaPublisher
 logger = logging.getLogger(__name__)
 
 @functions_framework.cloud_event
-def publish_schema_gcs(cloud_event: CloudEvent) -> None:
+def publish_schema_gcs(cloud_event: CloudEvent) -> tuple[str, int]:
     """
     Retrieve and publish a schema to SDS; triggered by a CloudEvent from GCS when a schema file is uploaded.
     Note: This function will not validate the schema before publishing. The function is only for testing.
 
-    Parameters:
-        cloud_event: The CloudEvent triggering the function.
+    :param cloud_event: The CloudEvent triggering the function.
+    :return: A tuple containing a message and an HTTP status code.
     """
     file_name = cloud_event.data["name"]
 
@@ -25,5 +25,6 @@ def publish_schema_gcs(cloud_event: CloudEvent) -> None:
             publisher.cleanup(file_name)
     except SchemaPublishError as e:
         logger.error(e.error_message)
+        return f"Error: {e.error_message}", 500
 
-    return None
+    return "OK", 200
