@@ -68,7 +68,6 @@ class SchemaPublishIntegrationTest(TestCase):
         * We poll the schema_success_topic to check if the schema was published.
         * We assert that the schema was published successfully.
         """
-        # publish the schema path to the queue topic
         self.schema_queue_pubsub_helper.publish_message(test_schema_success_filepath)
 
         messages = poll_subscription(
@@ -88,7 +87,6 @@ class SchemaPublishIntegrationTest(TestCase):
         * We poll the schema_fail topic to check the error message.
         * We assert that the error is SchemaDuplicationError.
         """
-        # publish the schema path to the queue topic
         self.schema_queue_pubsub_helper.publish_message(test_schema_success_filepath)
 
         messages = poll_subscription(
@@ -109,7 +107,6 @@ class SchemaPublishIntegrationTest(TestCase):
         * We poll the schema_fail topic to check the error message.
         * We assert that the error is SchemaVersionMismatchError.
         """
-        # publish the schema path to the queue topic
         self.schema_queue_pubsub_helper.publish_message(
             test_schema_version_mismatch_filepath
         )
@@ -132,7 +129,6 @@ class SchemaPublishIntegrationTest(TestCase):
         * We poll the schema_fail topic to check the error message.
         * We assert that the error is SurveyIDError.
         """
-        # publish the schema path to the queue topic
         self.schema_queue_pubsub_helper.publish_message(
             test_schema_survey_id_error_filepath
         )
@@ -155,7 +151,6 @@ class SchemaPublishIntegrationTest(TestCase):
         * We poll the schema_fail topic to check the error message.
         * We assert that the error is SchemaVersionError.
         """
-        # publish the schema path to the queue topic
         self.schema_queue_pubsub_helper.publish_message(
             test_schema_version_error_filepath
         )
@@ -178,7 +173,6 @@ class SchemaPublishIntegrationTest(TestCase):
         * We poll the schema_fail topic to check the error message.
         * We assert that the error is SchemaJSONDecodeError.
         """
-        # publish the schema path to the queue topic
         self.schema_queue_pubsub_helper.publish_message(
             test_schema_json_decode_error_filepath
         )
@@ -201,7 +195,6 @@ class SchemaPublishIntegrationTest(TestCase):
         * We poll the schema_fail topic to check the error message.
         * We assert that the error is SchemaFetchError.
         """
-        # publish the schema path to the queue topic
         self.schema_queue_pubsub_helper.publish_message(
             test_schema_fetch_error_filepath
         )

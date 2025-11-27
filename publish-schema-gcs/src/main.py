@@ -9,8 +9,8 @@ logger = logging.getLogger(__name__)
 @functions_framework.cloud_event
 def publish_schema_gcs(cloud_event: CloudEvent) -> tuple[str, int]:
     """
-    Retrieve and publish a schema to SDS; triggered by a CloudEvent from GCS when a schema file is uploaded.
-    Note: This function will not validate the schema before publishing. The function is only for testing.
+    Retrieve and publish a schema to SDS; triggered by a CloudEvent from GCS when a schema file is uploaded. This
+    function will not validate the schema before publishing. The function is only for testing.
 
     :param cloud_event: The CloudEvent triggering the function.
     :return: A tuple containing a message and an HTTP status code.

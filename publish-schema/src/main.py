@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 @functions_framework.cloud_event
-def publish_schema(cloud_event: CloudEvent) -> None:
+def publish_schema(cloud_event: CloudEvent) -> tuple[str, int]:
     """
     Retrieve, verify, and publish a schema to SDS; triggered by Pub/Sub message containing schema filepath on GitHub.
 
@@ -24,6 +24,8 @@ def publish_schema(cloud_event: CloudEvent) -> None:
     try:
         publisher = GithubSchemaPublisher()
         publisher.publish_schema(filepath)
+        return "OK", 200
     except SchemaPublishError as e:
         logger.error(e.error_message)
         PUB_SUB_SERVICE.send_message(e, CONFIG.PUBLISH_SCHEMA_ERROR_TOPIC_ID)
+        return f"Error: {e.error_message}", 500
