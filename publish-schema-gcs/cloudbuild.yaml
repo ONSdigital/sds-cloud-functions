@@ -5,7 +5,7 @@ steps:
 
   - name: gcr.io/$PROJECT_ID/zip
     args: [-r, /workspace/function.zip, .]
-    dir: publish-schema/src
+    dir: publish-schema-gcs/src
 
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     entrypoint: bash
@@ -30,35 +30,9 @@ steps:
       - europe-west2
       - --entry-point
       - ${_ENTRY_POINT}
-      - --trigger-topic
-      - ${_PUBLISH_SCHEMA_QUEUE_TOPIC_ID}
+      - --trigger-bucket
+      - ${_SCHEMA_PUBLISH_BUCKET_NAME}
       - --source
       - "gs://$PROJECT_ID-europe-west2-cloudfunctions/${_FUNCTION_NAME}/${_FUNCTION_NAME}-source.zip"
-
-  - name: python:3.13
-    id: Upgrade pip
-    entrypoint: python
-    args: [-m, pip, install, --upgrade, pip, --user]
-
-  - name: python:3.13
-    id: Install app requirements
-    entrypoint: python
-    args: [-m, pip, install, -r, publish-schema/src/requirements.txt, --user]
-
-  - name: python:3.13
-    id: Run integration tests
-    entrypoint: sh
-    args:
-      - -c
-      - |
-        export PROJECT_ID=${PROJECT_ID}
-        export PUBLISH_SCHEMA_ERROR_TOPIC_ID=${_PUBLISH_SCHEMA_ERROR_TOPIC_ID}
-        export PUBLISH_SCHEMA_SUCCESS_TOPIC_ID=${_PUBLISH_SCHEMA_TOPIC_ID}
-        export PUBLISH_SCHEMA_QUEUE_TOPIC_ID=${_PUBLISH_SCHEMA_QUEUE_TOPIC_ID}
-        export FIRESTORE_DB_NAME=${_FIRESTORE_DB_NAME}
-        export SCHEMA_BUCKET_NAME=${_SCHEMA_BUCKET_NAME}
-        cd publish-schema
-        make integration-test
-
 options:
   logging: CLOUD_LOGGING_ONLY
