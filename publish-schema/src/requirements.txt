@@ -1,4 +1,4 @@
---extra-index-url https://europe-west2-python.pkg.dev/ons-sds-jb/sds-python-packages/simple
+--extra-index-url https://europe-west2-python.pkg.dev/ons-sds-ci/sds-python-packages/simple
 cloudevents==1.11.0
 functions-framework==3.9.2
 setuptools==70.0.0
