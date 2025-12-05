@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 
 class DatasetFirebaseRepository:
     MAX_BATCH_SIZE_BYTES = 9 * 1024 * 1024
+    MAX_NUMBER_OF_WRITES_PER_BATCH = 500
 
     def __init__(self):
         # Initialize Firestore client
@@ -69,19 +70,26 @@ class DatasetFirebaseRepository:
 
             batch = self.client.batch()
             batch_size_bytes = 0
+            batch_num_records = 0
 
             for (unit_data, unit_identifier) in zip(unit_data_collection_with_metadata, extracted_unit_data_identifiers):
 
                 unit_data_size_bytes = ByteConversionService.get_serialized_size(unit_data)
 
-                if batch_size_bytes + unit_data_size_bytes >= self.MAX_BATCH_SIZE_BYTES:
+                # Open new batch if
+                # 1. Adding the new unit data would exceed the maximum batch size
+                # 2. Adding the new unit data would exceed the maximum number of writes per batch
+                if ((batch_size_bytes + unit_data_size_bytes >= self.MAX_BATCH_SIZE_BYTES) or
+                        (batch_num_records + 1 > self.MAX_NUMBER_OF_WRITES_PER_BATCH)):
                     batch.commit()
                     batch = self.client.batch()
                     batch_size_bytes = 0
+                    batch_num_records = 0
 
                 new_unit = unit_data_collection_snapshot.document(unit_identifier)
                 batch.set(new_unit, unit_data, merge=True)
                 batch_size_bytes += unit_data_size_bytes
+                batch_num_records += 1
 
             if batch_size_bytes > 0:
                 batch.commit()
