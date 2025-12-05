@@ -68,19 +68,15 @@ class DatasetFirebaseRepository:
             batch.commit()
 
             batch = self.client.batch()
-            logger.debug("A new transaction batch is created for unit data writes.")
             batch_size_bytes = 0
 
             for (unit_data, unit_identifier) in zip(unit_data_collection_with_metadata, extracted_unit_data_identifiers):
 
                 unit_data_size_bytes = ByteConversionService.get_serialized_size(unit_data)
-                logger.debug(f"Unit Data Size Bytes: {unit_data_size_bytes}")
 
                 if batch_size_bytes + unit_data_size_bytes >= self.MAX_BATCH_SIZE_BYTES:
-                    logger.debug(f"Total Size Bytes: {batch_size_bytes + unit_data_size_bytes} exceeds max batch size.")
                     batch.commit()
                     batch = self.client.batch()
-                    logger.debug("A new transaction batch is created for unit data writes.")
                     batch_size_bytes = 0
 
                 new_unit = unit_data_collection_snapshot.document(unit_identifier)
