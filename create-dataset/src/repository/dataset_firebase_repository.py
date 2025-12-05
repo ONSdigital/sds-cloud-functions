@@ -292,3 +292,4 @@ class DatasetFirebaseRepository:
             dataset_metadata["dataset_id"] = dataset.id
 
         return dataset_metadata
+
