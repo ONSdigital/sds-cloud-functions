@@ -44,6 +44,12 @@ class SchemaPublishGcsIntegrationTest(TestCase):
         pubsub_teardown(
             cls.schema_success_pubsub_helper, test_schema_subscriber_id_success
         )
+        pubsub_teardown(
+            cls.schema_success_pubsub_helper, test_schema_subscriber_id_fail
+        )
+        # if file still in bucket, delete it
+        if cls.bucket_service.check_file_exists("src/tests/test_data/test_schema_success.json"):
+            cls.bucket_service.delete_file("test_schema_success.json")
 
     @pytest.mark.order(1)
     def test_publish_schema_to_gcs(self):
