@@ -14,7 +14,7 @@ class SchemaPublishGcsIntegrationTest(TestCase):
     @classmethod
     def setup_class(cls):
         cleanup()
-        cls.bucket_service = FileService(
+        cls.file_service = FileService(
             Bucket.SCHEMA_PUBLISH_BUCKET, BucketLoader()
         )
         cls.schema_queue_pubsub_helper = PubSubHelper(
@@ -48,8 +48,8 @@ class SchemaPublishGcsIntegrationTest(TestCase):
             cls.schema_success_pubsub_helper, test_schema_subscriber_id_fail
         )
         # if file still in bucket, delete it
-        if cls.bucket_service.check_file_exists("src/tests/test_data/test_schema_success.json"):
-            cls.bucket_service.delete_file("test_schema_success.json")
+        if cls.file_service.check_file_exists("src/tests/test_data/test_schema_success.json"):
+            cls.file_service.delete_file("test_schema_success.json")
 
     @pytest.mark.order(1)
     def test_publish_schema_to_gcs(self):
@@ -61,7 +61,7 @@ class SchemaPublishGcsIntegrationTest(TestCase):
         *We assert that the schema was published successfully.
 
         """
-        self.bucket_service.upload_file("src/tests/test_data/test_schema_success.json")
+        self.file_service.upload_file("src/tests/test_data/test_schema_success.json")
 
         messages = poll_subscription(
             self.schema_success_pubsub_helper, test_schema_subscriber_id_success
